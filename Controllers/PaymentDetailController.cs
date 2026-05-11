@@ -31,23 +31,35 @@ namespace PaymentDetailApi.Controllers
         {
             var client = _httpClientFactory.CreateClient("LMStudio");
 
-            var tools = new[]
+            var tools = new object[]
             {
                 new
                 {
                     type = "function",
                     function = new
                     {
-                        name = "get_payment_by_name",
+                        name = "get_payment",
                         description = "Get payment details by card owner name",
                         parameters = new
                         {
                             type = "object",
-                            properties = new
-                            {
-                                name = new { type = "string" }
-                            },
+                            properties = new { name = new { type = "string" } },
                             required = new[] { "name" }
+                        }
+                    }
+                },
+                new
+                {
+                    type = "function",
+                    function = new
+                    {
+                        name = "delete_payment",
+                        description = "Delete a payment record by its ID",
+                        parameters = new
+                        {
+                            type = "object",
+                            properties = new { id = new { type = "integer" } },
+                            required = new[] { "id" }
                         }
                     }
                 }
@@ -72,12 +84,25 @@ namespace PaymentDetailApi.Controllers
             {
                 var assistantMessage = choice.GetProperty("message");
                 var toolCall = assistantMessage.GetProperty("tool_calls")[0];
+                var toolName = toolCall.GetProperty("function").GetProperty("name").GetString();
                 var args = JsonSerializer.Deserialize<JsonElement>(
                     toolCall.GetProperty("function").GetProperty("arguments").GetString()!);
-                var name = args.GetProperty("name").GetString();
 
-                var payment = await GetPaymentDetailsByName(name ?? "");
-                var toolResult = JsonSerializer.Serialize(payment);
+                string toolResult;
+                if (toolName == "delete_payment")
+                {
+                    var id = args.GetProperty("id").GetInt32();
+                    var deleteResult = await DeletePaymentDetails(id);
+                    toolResult = deleteResult is OkObjectResult ok
+                        ? JsonSerializer.Serialize(ok.Value)
+                        : $"{{\"error\": \"Payment with id {id} not found\"}}";
+                }
+                else
+                {
+                    var name = args.GetProperty("name").GetString();
+                    var payment = await GetPaymentDetailsByName(name ?? "");
+                    toolResult = JsonSerializer.Serialize(payment);
+                }
 
                 messages.Add(JsonSerializer.Deserialize<object>(JsonSerializer.Serialize(assistantMessage))!);
                 messages.Add(new { role = "tool", content = toolResult });
@@ -89,10 +114,28 @@ namespace PaymentDetailApi.Controllers
 
                 result = await followUpResponse.Content.ReadFromJsonAsync<JsonElement>();
                 choice = result.GetProperty("choices")[0];
+
+                var toolMessage = choice.GetProperty("message").GetProperty("content").GetString();
+                return Ok(new { reply = toolMessage });
             }
 
-            var message = choice.GetProperty("message").GetProperty("content").GetString();
-            return Ok(new { reply = message });
+            // No tool matched — delegate to MCP playwright for web search
+            var mcpBody = new
+            {
+                model = "ibm/granite-4-micro",
+                input = request.Prompt,
+                integrations = new[] { "mcp/playwright" },
+                context_length = 8000,
+                temperature = 0
+            };
+
+            var mcpResponse = await client.PostAsJsonAsync("/api/v1/chat", mcpBody);
+            if (!mcpResponse.IsSuccessStatusCode)
+                return StatusCode((int)mcpResponse.StatusCode, "MCP playwright request failed");
+
+            var mcpResult = await mcpResponse.Content.ReadFromJsonAsync<JsonElement>();
+            var mcpMessage = mcpResult.GetProperty("output").GetString();
+            return Ok(new { reply = mcpMessage });
         }
 
         // GET: api/PaymentDetail

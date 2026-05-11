@@ -9,5 +9,6 @@ namespace PaymentDetailApi.Models
         {
         }
         public DbSet<PaymentDetails> PaymentDetails { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
     }
 }

@@ -13,6 +13,9 @@ builder.Services.AddHttpClient("LMStudio", client =>
 {
     client.BaseAddress = new Uri("http://localhost:1234");
     client.Timeout = TimeSpan.FromMinutes(5);
+    var apiKey = builder.Configuration["LMStudio:ApiKey"] ?? "lm-studio";
+    client.DefaultRequestHeaders.Authorization =
+        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 });
 
 builder.Services.AddDbContext<PaymentDetailsContext>(options =>
