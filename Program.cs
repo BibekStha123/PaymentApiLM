@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PaymentDetailApi.Models;
+using PaymentDetailApi.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +22,11 @@ builder.Services.AddDbContext<PaymentDetailsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDetailContext") 
     ?? throw new InvalidOperationException("Connection string 'PaymentDetailContext' not found.")));
 
+builder.Services.AddMediatR(cfg =>
+     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

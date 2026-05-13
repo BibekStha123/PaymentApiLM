@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaymentDetailApi.Models;
 
-namespace PaymentDetailApi.Models
+namespace PaymentDetailApi.Infrastructure
 {
     public class PaymentDetailsContext : DbContext
     {
