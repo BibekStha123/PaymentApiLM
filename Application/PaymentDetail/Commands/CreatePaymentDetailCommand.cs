@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using PaymentDetailApi.Application.PaymentDetail.Events;
+using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Features.PaymentDetail.Events;
 using PaymentDetailApi.Infrastructure;
-using PaymentDetailApi.Models;
 
-namespace PaymentDetailApi.Features.PaymentDetail.Commands
+namespace PaymentDetailApi.Application.PaymentDetail.Commands
 {
-    public record CreatePaymentDetailCommand(PaymentDetails paymentDetail) : IRequest<int>;
+    public record CreatePaymentDetailCommand(Domain.Payment.Entities.PaymentDetail paymentDetail) : IRequest<int>;
     public class CreatePaymentDetailCommandHandler : IRequestHandler<CreatePaymentDetailCommand, int>
     {
         private readonly PaymentDetailsContext _context;

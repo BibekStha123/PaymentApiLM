@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Features.PaymentDetail.Commands;
 using PaymentDetailApi.Features.PaymentDetail.Queries;
-using PaymentDetailApi.Models;
 
-namespace PaymentDetailApi.Controllers
+namespace PaymentDetailApi.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -135,7 +135,7 @@ namespace PaymentDetailApi.Controllers
 
         // GET: api/PaymentDetail
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymentDetails>>> GetPaymentDetails()
+        public async Task<ActionResult<IEnumerable<PaymentDetail>>> GetPaymentDetails()
         {
             var result = await _mediator.Send(new GetAllPaymentDetailsQuery());
             return Ok(result);
@@ -143,7 +143,7 @@ namespace PaymentDetailApi.Controllers
 
         // GET: api/PaymentDetail/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PaymentDetails>> GetPaymentDetails(int id)
+        public async Task<ActionResult<PaymentDetail>> GetPaymentDetails(int id)
         {
             var result = await _mediator.Send(new GetPaymentDetailsByIdQuery(id));
 
@@ -152,7 +152,7 @@ namespace PaymentDetailApi.Controllers
 
         // GET: api/PaymentDetail/name
         [HttpGet("name/{name}")]
-        public async Task<ActionResult<PaymentDetails>> GetPaymentDetailsByName(string name)
+        public async Task<ActionResult<PaymentDetail>> GetPaymentDetailsByName(string name)
         {
             var result = await _mediator.Send(new GetPaymentDetailsByNameQuery(name));
 
@@ -193,7 +193,7 @@ namespace PaymentDetailApi.Controllers
         // POST: api/PaymentDetail
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<int>> PostPaymentDetails(PaymentDetails paymentDetails)
+        public async Task<ActionResult<int>> PostPaymentDetails(PaymentDetail paymentDetails)
         {
             return Ok(await _mediator.Send(new CreatePaymentDetailCommand(paymentDetails)));
         }

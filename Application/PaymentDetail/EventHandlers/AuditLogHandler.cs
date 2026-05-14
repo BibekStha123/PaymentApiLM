@@ -1,18 +1,19 @@
 ﻿using MediatR;
-using PaymentDetailApi.Features.PaymentDetail.Events;
+using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure;
 using PaymentDetailApi.Models;
 
-namespace PaymentDetailApi.Features.PaymentDetail.EventHandlers
+namespace PaymentDetailApi.Application.PaymentDetail.EventHandlers
 {
-    public class AuditLogHandler : INotificationHandler<PaymentCreatedEvent>
+    public class AuditLogHandler : INotificationHandler<PaymentCreatedDomainEvent>
     {
         private readonly PaymentDetailsContext _context;
         public AuditLogHandler(PaymentDetailsContext context)
         {
             _context = context;
         }
-        public Task Handle(PaymentCreatedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(PaymentCreatedDomainEvent notification, CancellationToken cancellationToken)
         {
             _context.AuditLogs.Add(new AuditLog
             {

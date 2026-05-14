@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Infrastructure;
-using PaymentDetailApi.Models;
 
-namespace PaymentDetailApi.Features.PaymentDetail.Queries
+namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {
-    public record GetPaymentDetailsByNameQuery(string name) : IRequest<PaymentDetails>;
-    public class GetPaymentDetailsByNameQueryHandler : IRequestHandler<GetPaymentDetailsByNameQuery, PaymentDetails>
+    public record GetPaymentDetailsByNameQuery(string name) : IRequest<Domain.Payment.Entities.PaymentDetail>;
+    public class GetPaymentDetailsByNameQueryHandler : IRequestHandler<GetPaymentDetailsByNameQuery, Domain.Payment.Entities.PaymentDetail>
     {
         private readonly PaymentDetailsContext _context;
         public GetPaymentDetailsByNameQueryHandler(PaymentDetailsContext context    )
@@ -14,7 +14,7 @@ namespace PaymentDetailApi.Features.PaymentDetail.Queries
             _context = context;
         }
 
-        public async Task<PaymentDetails> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
+        public async Task<Domain.Payment.Entities.PaymentDetail> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
         {
             var paymentDetails = await _context.PaymentDetails.FirstOrDefaultAsync(p => p.CardOwnerName == request.name);
 

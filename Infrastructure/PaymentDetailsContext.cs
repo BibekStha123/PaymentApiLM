@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Models;
 
 namespace PaymentDetailApi.Infrastructure
@@ -9,7 +10,7 @@ namespace PaymentDetailApi.Infrastructure
             : base(options)
         {
         }
-        public DbSet<PaymentDetails> PaymentDetails { get; set; }
+        public DbSet<PaymentDetail> PaymentDetails { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
     }
 }
