@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PaymentDetailApi.Application.PaymentDetail.Commands;
+using PaymentDetailApi.Application.PaymentDetail.Queries;
 using PaymentDetailApi.Domain.Payment.Entities;
-using PaymentDetailApi.Features.PaymentDetail.Commands;
-using PaymentDetailApi.Features.PaymentDetail.Queries;
 
 namespace PaymentDetailApi.API.Controllers
 {
@@ -193,9 +193,9 @@ namespace PaymentDetailApi.API.Controllers
         // POST: api/PaymentDetail
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<int>> PostPaymentDetails(PaymentDetail paymentDetails)
+        public async Task<ActionResult<int>> PostPaymentDetails(CreatePaymentDetailCommand command)
         {
-            return Ok(await _mediator.Send(new CreatePaymentDetailCommand(paymentDetails)));
+            return Ok(await _mediator.Send(command));
         }
 
         // DELETE: api/PaymentDetail/5

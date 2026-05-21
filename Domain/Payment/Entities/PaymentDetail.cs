@@ -14,6 +14,8 @@ namespace PaymentDetailApi.Domain.Payment.Entities
         private readonly List<DomainEvent> _domainEvents = new();
         public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents;
 
+        private PaymentDetail() { } // for EF Core materialization
+
         public PaymentDetail(string cardOwnerName, string cardNumber, string expirationDate, string securityCode)
         {
             CardOwnerName = cardOwnerName;

@@ -1,8 +1,6 @@
-﻿using MediatR;
-
-namespace PaymentDetailApi.Domain.Common
+﻿namespace PaymentDetailApi.Domain.Common
 {
-    public abstract class DomainEvent : INotification
+    public abstract class DomainEvent
     {
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }

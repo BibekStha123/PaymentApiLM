@@ -1,7 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PaymentDetailApi.Domain.Payment.Entities;
-using PaymentDetailApi.Infrastructure;
+using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {

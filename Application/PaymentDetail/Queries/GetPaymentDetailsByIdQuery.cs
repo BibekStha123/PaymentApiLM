@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using PaymentDetailApi.Domain.Payment.Entities;
-using PaymentDetailApi.Infrastructure;
+using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {

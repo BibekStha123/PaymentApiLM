@@ -1,7 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using PaymentDetailApi.Infrastructure;
+using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Infrastructure.DomainEvents;
+using PaymentDetailApi.Infrastructure.EventHandlers;
+using PaymentDetailApi.Infrastructure.Persistence;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory
+});
 
 // Add services to the container.
 
@@ -19,11 +27,14 @@ builder.Services.AddHttpClient("LMStudio", client =>
 });
 
 builder.Services.AddDbContext<PaymentDetailsContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDetailContext") 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDetailContext")
     ?? throw new InvalidOperationException("Connection string 'PaymentDetailContext' not found.")));
 
 builder.Services.AddMediatR(cfg =>
      cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.Services.AddScoped<DomainEventDispatcher>();
+builder.Services.AddScoped<IDomainEventHandler<PaymentCreatedDomainEvent>, PaymentCreatedAuditHandler>();
 
 var app = builder.Build();
 

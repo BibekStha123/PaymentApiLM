@@ -5,8 +5,6 @@ C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\P
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\PaymentDetailApi.csproj.CoreCompileInputs.cache
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\PaymentDetailApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\PaymentDetailApi.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\appsettings.Development.json
-C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\appsettings.json
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\PaymentDetailApi.staticwebassets.endpoints.json
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\PaymentDetailApi.exe
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\PaymentDetailApi.deps.json
@@ -278,8 +276,10 @@ C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\t
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
-C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\PaymentDetailApi.sourcelink.json
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\MediatR.dll
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\MediatR.Contracts.dll
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\System.Diagnostics.DiagnosticSource.dll
+C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\appsettings.Development.json
+C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\appsettings.json

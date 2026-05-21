@@ -1,31 +1,45 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using PaymentDetailApi.Application.PaymentDetail.Events;
-using PaymentDetailApi.Domain.Payment.Entities;
-using PaymentDetailApi.Features.PaymentDetail.Events;
-using PaymentDetailApi.Infrastructure;
+using MediatR;
+using PaymentDetailApi.Infrastructure.DomainEvents;
+using PaymentDetailApi.Infrastructure.Persistence;
+using DomainPaymentDetail = PaymentDetailApi.Domain.Payment.Entities.PaymentDetail;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Commands
 {
-    public record CreatePaymentDetailCommand(Domain.Payment.Entities.PaymentDetail paymentDetail) : IRequest<int>;
+    public record CreatePaymentDetailCommand(
+        string CardOwnerName,
+        string CardNumber,
+        string ExpirationDate,
+        string SecurityCode) : IRequest<int>;
+
     public class CreatePaymentDetailCommandHandler : IRequestHandler<CreatePaymentDetailCommand, int>
     {
         private readonly PaymentDetailsContext _context;
-        private readonly IMediator _mediator;
-        public CreatePaymentDetailCommandHandler(PaymentDetailsContext context, IMediator mediator)
+        private readonly DomainEventDispatcher _dispatcher;
+
+        public CreatePaymentDetailCommandHandler(PaymentDetailsContext context, DomainEventDispatcher dispatcher)
         {
             _context = context;
-            _mediator = mediator;
+            _dispatcher = dispatcher;
         }
+
         public async Task<int> Handle(CreatePaymentDetailCommand request, CancellationToken cancellationToken)
         {
-            _context.PaymentDetails.Add(request.paymentDetail);
+            var payment = new DomainPaymentDetail(
+                request.CardOwnerName,
+                request.CardNumber,
+                request.ExpirationDate,
+                request.SecurityCode);
 
-            await _mediator.Publish(new PaymentCreatedEvent(request.paymentDetail), cancellationToken);
+            _context.PaymentDetails.Add(payment);
+            await _context.SaveChangesAsync(cancellationToken); // payment.Id is set after this
 
-            await _context.SaveChangesAsync(cancellationToken);
+            var events = payment.DomainEvents.ToList();
+            payment.ClearEvents();
+            await _dispatcher.Dispatch(events); // handlers add audit log to context
 
-            return request.paymentDetail.Id;
+            await _context.SaveChangesAsync(cancellationToken); // save the audit log
+
+            return payment.Id;
         }
     }
 }

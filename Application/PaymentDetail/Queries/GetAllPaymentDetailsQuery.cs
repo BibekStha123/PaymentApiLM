@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PaymentDetailApi.Domain.Payment.Entities;
-using PaymentDetailApi.Infrastructure;
+using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {
@@ -15,7 +15,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
         }
         public async Task<List<Domain.Payment.Entities.PaymentDetail>> Handle(GetAllPaymentDetailsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.PaymentDetails.ToListAsync(cancellationToken);
+            return await _context.PaymentDetails.FromSqlRaw("SelectAllPaymentDetails").ToListAsync();
         }
     }
 }

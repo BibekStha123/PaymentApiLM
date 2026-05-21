@@ -1,6 +1,6 @@
 [
   {
-    "ContainingType": "PaymentDetailApi.Controllers.PaymentDetailController",
+    "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
     "Method": "GetPaymentDetails",
     "RelativePath": "api/PaymentDetail",
     "HttpMethod": "GET",
@@ -9,7 +9,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[PaymentDetailApi.Models.PaymentDetails, PaymentDetailApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PaymentDetailApi.Domain.Payment.Entities.PaymentDetail, PaymentDetailApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -20,7 +20,7 @@
     ]
   },
   {
-    "ContainingType": "PaymentDetailApi.Controllers.PaymentDetailController",
+    "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
     "Method": "PostPaymentDetails",
     "RelativePath": "api/PaymentDetail",
     "HttpMethod": "POST",
@@ -28,8 +28,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "paymentDetails",
-        "Type": "PaymentDetailApi.Models.PaymentDetails",
+        "Name": "command",
+        "Type": "PaymentDetailApi.Application.PaymentDetail.Commands.CreatePaymentDetailCommand",
         "IsRequired": true
       }
     ],
@@ -46,7 +46,7 @@
     ]
   },
   {
-    "ContainingType": "PaymentDetailApi.Controllers.PaymentDetailController",
+    "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
     "Method": "GetPaymentDetails",
     "RelativePath": "api/PaymentDetail/{id}",
     "HttpMethod": "GET",
@@ -61,7 +61,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "PaymentDetailApi.Models.PaymentDetails",
+        "Type": "PaymentDetailApi.Domain.Payment.Entities.PaymentDetail",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -72,7 +72,7 @@
     ]
   },
   {
-    "ContainingType": "PaymentDetailApi.Controllers.PaymentDetailController",
+    "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
     "Method": "GetPaymentDetails",
     "RelativePath": "api/PaymentDetail/chat",
     "HttpMethod": "POST",
@@ -81,7 +81,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[PaymentDetailApi.Models.PaymentDetails, PaymentDetailApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PaymentDetailApi.Domain.Payment.Entities.PaymentDetail, PaymentDetailApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -92,7 +92,7 @@
     ]
   },
   {
-    "ContainingType": "PaymentDetailApi.Controllers.PaymentDetailController",
+    "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
     "Method": "GetPaymentDetailsByName",
     "RelativePath": "api/PaymentDetail/name/{name}",
     "HttpMethod": "GET",
@@ -107,7 +107,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "PaymentDetailApi.Models.PaymentDetails",
+        "Type": "PaymentDetailApi.Domain.Payment.Entities.PaymentDetail",
         "MediaTypes": [
           "text/plain",
           "application/json",
