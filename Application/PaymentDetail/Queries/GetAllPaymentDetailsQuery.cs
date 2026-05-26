@@ -15,7 +15,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
         }
         public async Task<List<Domain.Payment.Entities.PaymentDetail>> Handle(GetAllPaymentDetailsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.PaymentDetails.FromSqlRaw("SelectAllPaymentDetails").ToListAsync();
+            return await _context.PaymentDetails.ToListAsync();
         }
     }
 }
