@@ -3,16 +3,13 @@ using PaymentDetailApi.Domain.Payment.Events;
 
 namespace PaymentDetailApi.Domain.Payment.Entities
 {
-    public class PaymentDetail
+    public class PaymentDetail : AggregateRoot
     {
         public int Id { get; private set; }
         public string CardOwnerName { get; private set; }
         public string CardNumber { get; private set; }
         public string ExpirationDate { get; private set; }
         public string SecurityCode { get; private set; }
-
-        private readonly List<DomainEvent> _domainEvents = new();
-        public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents;
 
         private PaymentDetail() { } // for EF Core materialization
 
@@ -25,13 +22,5 @@ namespace PaymentDetailApi.Domain.Payment.Entities
 
             AddDomainEvent(new PaymentCreatedDomainEvent(this));
         }
-
-        private void AddDomainEvent(DomainEvent domainEvent)
-        {
-            _domainEvents.Add(domainEvent);
-        }
-
-        public void ClearEvents() => _domainEvents.Clear();
-
     }
 }

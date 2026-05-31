@@ -1,4 +1,6 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using PaymentDetailApi.Application.Common.Behaviors;
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure.DomainEvents;
@@ -32,6 +34,8 @@ builder.Services.AddDbContext<PaymentDetailsContext>(options =>
 
 builder.Services.AddMediatR(cfg =>
      cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventDispatchBehavior<,>));
 
 builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentCreatedDomainEvent>, PaymentCreatedAuditHandler>();

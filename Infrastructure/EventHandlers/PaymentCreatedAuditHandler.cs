@@ -13,13 +13,13 @@ namespace PaymentDetailApi.Infrastructure.EventHandlers
         }
         public Task Handle(PaymentCreatedDomainEvent domainEvent)
         {
-            //_context.AuditLogs.Add(new Persistence.Entities.AuditLog
-            //{
-            //    Action = "Create",
-            //    PaymentId = domainEvent.PaymentDetails.Id,
-            //    Details = $"Payment created for {domainEvent.PaymentDetails.CardOwnerName}"
-            //});
-            Console.WriteLine(domainEvent);
+            _context.AuditLogs.Add(new Persistence.Entities.AuditLog
+            {
+                Action = "Create",
+                PaymentId = domainEvent.PaymentDetails.Id,
+                Details = $"Payment created for {domainEvent.PaymentDetails.CardOwnerName}"
+            });
+
             return Task.CompletedTask;
         }
     }
