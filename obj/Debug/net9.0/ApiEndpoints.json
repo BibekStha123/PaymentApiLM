@@ -73,6 +73,32 @@
   },
   {
     "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
+    "Method": "DeletePaymentDetails",
+    "RelativePath": "api/PaymentDetail/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "PaymentDetailApi.API.Controllers.PaymentDetailController",
     "Method": "GetPaymentDetails",
     "RelativePath": "api/PaymentDetail/chat",
     "HttpMethod": "POST",

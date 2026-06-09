@@ -199,20 +199,12 @@ namespace PaymentDetailApi.API.Controllers
         }
 
         // DELETE: api/PaymentDetail/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeletePaymentDetails(int id)
-        //{
-        //    var paymentDetails = await _context.PaymentDetails.FindAsync(id);
-        //    if (paymentDetails == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<string>> DeletePaymentDetails(int id)
+        {
+            return Ok(await _mediator.Send(new DeletePaymentDetailCommand(id)));
 
-        //    _context.PaymentDetails.Remove(paymentDetails);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(await _context.PaymentDetails.ToListAsync());
-        //}
+        }
 
         //private bool PaymentDetailsExists(int id)
         //{

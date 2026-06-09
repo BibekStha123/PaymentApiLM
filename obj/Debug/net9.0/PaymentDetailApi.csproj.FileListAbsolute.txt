@@ -282,3 +282,4 @@ C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\M
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\bin\Debug\net9.0\appsettings.json
+C:\Users\bibek\source\repos\PaymentDetailApi\PaymentDetailApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

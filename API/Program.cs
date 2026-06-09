@@ -39,6 +39,7 @@ builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventDispa
 
 builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentCreatedDomainEvent>, PaymentCreatedAuditHandler>();
+builder.Services.AddScoped<IDomainEventHandler<PaymentDeletedDomainEvent>, PaymentDeletedAuditHandler>();
 
 var app = builder.Build();
 
