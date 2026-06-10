@@ -10,7 +10,7 @@ namespace PaymentDetailApi.Domain.Payment.Entities
         public string CardNumber { get; private set; }
         public string ExpirationDate { get; private set; }
         public string SecurityCode { get; private set; }
-
+        public bool Active { get; private set; }
         private PaymentDetail() { } // for EF Core materialization
 
         public PaymentDetail(string cardOwnerName, string cardNumber, string expirationDate, string securityCode)
@@ -27,6 +27,7 @@ namespace PaymentDetailApi.Domain.Payment.Entities
 
         public void Delete()
         {
+            Active = false;
             AddDomainEvent(new PaymentDeletedDomainEvent(this));
         }
 

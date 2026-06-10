@@ -20,7 +20,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Commands
                 return $"Payment with id {request.id} not found.";
 
             payment.Delete();
-            //_context.PaymentDetails.Remove(payment);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return $"Payment with id {request.id} deleted successfully.";
         }

@@ -18,7 +18,7 @@ namespace PaymentDetailApi.Infrastructure.EventHandlers
             {
                 Action = "Delete",
                 PaymentId = domainEvent.PaymentDetails.Id,
-                Details = $"Payment deleted for {domainEvent.PaymentDetails.CardOwnerName}"
+                Details = $"Payment deleted for {domainEvent.PaymentDetails.Id}"
             });
 
             return Task.CompletedTask;

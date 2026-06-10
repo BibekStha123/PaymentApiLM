@@ -1,26 +1,26 @@
-﻿using MediatR;
-using Microsoft.Data.SqlClient;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {
-    public record GetPaymentDetailsByNameQuery(string name) : IRequest<Domain.Payment.Entities.PaymentDetail>;
-    public class GetPaymentDetailsByNameQueryHandler : IRequestHandler<GetPaymentDetailsByNameQuery, Domain.Payment.Entities.PaymentDetail>
+    public record GetPaymentDetailsByNameQuery(string name) : IRequest<PaymentDetailResponse>;
+    public class GetPaymentDetailsByNameQueryHandler : IRequestHandler<GetPaymentDetailsByNameQuery, PaymentDetailResponse>
     {
         private readonly PaymentDetailsContext _context;
-        public GetPaymentDetailsByNameQueryHandler(PaymentDetailsContext context    )
+        public GetPaymentDetailsByNameQueryHandler(PaymentDetailsContext context)
         {
             _context = context;
         }
 
-        public async Task<Domain.Payment.Entities.PaymentDetail> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
+        public async Task<PaymentDetailResponse> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
         {
-            var paymentDetails = await _context.PaymentDetails.FirstOrDefaultAsync(p => p.CardOwnerName == request.name);
+            var payment = await _context.PaymentDetails.FirstOrDefaultAsync(p => p.Active && p.CardOwnerName == request.name, cancellationToken);
 
-            return paymentDetails ?? throw new Exception($"Payment Details does not exist for {request.name}");
+            if (payment is null)
+                throw new Exception($"Payment Details does not exist for {request.name}");
 
+            return new PaymentDetailResponse(payment.Id, payment.CardOwnerName, payment.CardNumber, payment.ExpirationDate, payment.SecurityCode, payment.Active);
         }
     }
 }
