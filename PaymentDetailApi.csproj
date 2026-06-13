@@ -18,15 +18,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="PaymentDetailApi.UnitTests\**" />
+    <Content Remove="PaymentDetailApi.UnitTests\**" />
+    <None Remove="PaymentDetailApi.UnitTests\**" />
+    <EmbeddedResource Remove="PaymentDetailApi.UnitTests\**" />
+    <Compile Remove="PaymentDetailApi.IntegrationTests\**" />
+    <Content Remove="PaymentDetailApi.IntegrationTests\**" />
+    <None Remove="PaymentDetailApi.IntegrationTests\**" />
+    <EmbeddedResource Remove="PaymentDetailApi.IntegrationTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.15" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14"/>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.12" />
+    <PackageReference Include="xunit.v3.core" Version="3.2.2" />
   </ItemGroup>
 
 </Project>

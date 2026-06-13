@@ -21,6 +21,7 @@ namespace PaymentDetailApi.Domain.Payment.Entities
             CardNumber = cardNumber;
             ExpirationDate = expirationDate;
             SecurityCode = securityCode;
+            Active = true;
 
             AddDomainEvent(new PaymentCreatedDomainEvent(this));
         }
