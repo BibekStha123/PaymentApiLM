@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Entities;
+using PaymentDetailApi.Domain.Shared;
 using PaymentDetailApi.Infrastructure.Persistence.Entities;
 
 namespace PaymentDetailApi.Infrastructure.Persistence
@@ -15,6 +16,7 @@ namespace PaymentDetailApi.Infrastructure.Persistence
         }
         public DbSet<PaymentDetail> PaymentDetails { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<Currency> Currency { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

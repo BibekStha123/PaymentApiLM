@@ -1,9 +1,10 @@
-﻿using System.Text.Json;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.PaymentDetail.Commands;
 using PaymentDetailApi.Application.PaymentDetail.Queries;
 using PaymentDetailApi.Domain.Payment.Entities;
+using PaymentDetailApi.Domain.Shared;
 
 namespace PaymentDetailApi.API.Controllers
 {
@@ -135,9 +136,9 @@ namespace PaymentDetailApi.API.Controllers
 
         // GET: api/PaymentDetail
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymentDetail>>> GetPaymentDetails()
+        public async Task<ActionResult<CursorPagedResponse<PaymentDetail>>> GetPaymentDetails([FromQuery] int? cursor, [FromQuery] int limit = 10)
         {
-            var result = await _mediator.Send(new GetAllPaymentDetailsQuery());
+            var result = await _mediator.Send(new GetAllPaymentDetailsQuery(cursor, limit));
             return Ok(result);
         }
 
