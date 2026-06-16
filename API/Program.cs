@@ -1,12 +1,17 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PaymentDetailApi.Application.Common.Behaviors;
+using PaymentDetailApi.Application.Common.Interfaces;
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Infrastructure.Auth;
 using PaymentDetailApi.Infrastructure.DomainEvents;
 using PaymentDetailApi.Infrastructure.EventHandlers;
 using PaymentDetailApi.Infrastructure.Persistence;
+using System.Text;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -64,6 +69,24 @@ builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentCreatedDomainEvent>, PaymentCreatedAuditHandler>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentDeletedDomainEvent>, PaymentDeletedAuditHandler>();
 
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
 var app = builder.Build();
 
 
@@ -79,12 +102,10 @@ options.WithOrigins("http://localhost:4200")
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseRateLimiter();
-
 app.MapControllers();
-
 app.Run();
 
 public partial class Program { }

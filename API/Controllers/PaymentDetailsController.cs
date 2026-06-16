@@ -9,13 +9,13 @@ using PaymentDetailApi.Domain.Payment.Entities;
 namespace PaymentDetailApi.API.Controllers
 {
     [EnableRateLimiting("sliding")]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class PaymentDetailController : ControllerBase
+    public class PaymentDetailsController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMediator _mediator;
-        public PaymentDetailController(IMediator mediator, IHttpClientFactory httpClientFactory)
+        public PaymentDetailsController(IMediator mediator, IHttpClientFactory httpClientFactory)
         {
             _mediator = mediator;
             _httpClientFactory = httpClientFactory;
