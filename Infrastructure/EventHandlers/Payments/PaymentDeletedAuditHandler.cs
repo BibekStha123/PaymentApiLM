@@ -2,7 +2,7 @@ using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure.Persistence;
 
-namespace PaymentDetailApi.Infrastructure.EventHandlers
+namespace PaymentDetailApi.Infrastructure.EventHandlers.Payments
 {
     public class PaymentDeletedAuditHandler : IDomainEventHandler<PaymentDeletedDomainEvent>
     {

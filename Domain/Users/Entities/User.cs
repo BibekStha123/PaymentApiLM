@@ -32,7 +32,7 @@ namespace PaymentDetailApi.Domain.User.Entities
                 CreatedAt = DateTime.UtcNow
             };
 
-            user.AddDomainEvent(new UserRegisteredDomainEvent(user));
+            user.AddDomainEvent(new UserCreatedDomainEvent(user));
 
             return user;
         }

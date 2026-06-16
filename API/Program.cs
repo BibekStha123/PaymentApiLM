@@ -9,7 +9,7 @@ using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure.Auth;
 using PaymentDetailApi.Infrastructure.DomainEvents;
-using PaymentDetailApi.Infrastructure.EventHandlers;
+using PaymentDetailApi.Infrastructure.EventHandlers.Payments;
 using PaymentDetailApi.Infrastructure.Persistence;
 using System.Text;
 using System.Threading.RateLimiting;

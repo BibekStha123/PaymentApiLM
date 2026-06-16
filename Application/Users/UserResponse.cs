@@ -1,6 +1,4 @@
 ﻿namespace PaymentDetailApi.Application.User
 {
-    public class UserResponse
-    {
-    }
+    public record UserResponse(string Email, string DisplayName, string Token);
 }
