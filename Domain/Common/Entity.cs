@@ -1,6 +1,6 @@
 namespace PaymentDetailApi.Domain.Common
 {
-    public abstract class AggregateRoot
+    public abstract class Entity
     {
         private readonly List<DomainEvent> _domainEvents = new();
         public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents;

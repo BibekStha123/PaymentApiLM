@@ -3,7 +3,7 @@ using PaymentDetailApi.Domain.Payment.Events;
 
 namespace PaymentDetailApi.Domain.Payment.Entities
 {
-    public class PaymentDetail : AggregateRoot
+    public class PaymentDetail : Entity
     {
         public int Id { get; private set; }
         public string CardOwnerName { get; private set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PaymentDetailApi.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using PaymentDetailApi.Infrastructure.Persistence;
 namespace PaymentDetailApi.Migrations
 {
     [DbContext(typeof(PaymentDetailsContext))]
-    partial class PaymentDetailsContextModelSnapshot : ModelSnapshot
+    [Migration("20260618105314_category")]
+    partial class category
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,44 +44,6 @@ namespace PaymentDetailApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("PaymentDetailApi.Domain.Catalog.Entities.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("PaymentDetailApi.Domain.Payment.Entities.PaymentDetail", b =>
@@ -215,15 +180,6 @@ namespace PaymentDetailApi.Migrations
                     b.HasIndex("PaymentId");
 
                     b.ToTable("AuditLogs");
-                });
-
-            modelBuilder.Entity("PaymentDetailApi.Domain.Catalog.Entities.Product", b =>
-                {
-                    b.HasOne("PaymentDetailApi.Domain.Catalog.Entities.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("PaymentDetailApi.Infrastructure.Persistence.Entities.AuditLog", b =>

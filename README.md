@@ -16,7 +16,7 @@ Domain events are used to decouple side-effects (e.g. audit logging, notificatio
 |---|---|---|
 | `DomainEvent` | `Domain/Common/` | Abstract base class all events inherit from |
 | `IDomainEventHandler<T>` | `Domain/Common/` | Interface every handler must implement |
-| `AggregateRoot` | `Domain/Common/` | Base class for entities; holds the private `_domainEvents` list |
+| `Entity` | `Domain/Common/` | Base class for entities; holds the private `_domainEvents` list |
 | `PaymentCreatedDomainEvent` | `Domain/Payment/Events/` | Concrete event, carries the `PaymentDetail` entity |
 | `DomainEventDispatcher` | `Infrastructure/DomainEvents/` | Resolves and invokes handlers at runtime via DI |
 | `DomainEventDispatchBehavior` | `Application/Common/Behaviors/` | MediatR pipeline behavior — automatically runs after every command handler |
@@ -70,7 +70,7 @@ PaymentDetailController.PostPaymentDetails()
             │
             ← control returns here after next() completes
             │
-            ├─ scan _context.ChangeTracker for AggregateRoot entities with pending events
+            ├─ scan _context.ChangeTracker for Entity entities with pending events
             ├─ collect all events, then clear them from entities (prevents double-dispatch)
             ├─ await dispatcher.Dispatch(events)
             │       └─ for each event:

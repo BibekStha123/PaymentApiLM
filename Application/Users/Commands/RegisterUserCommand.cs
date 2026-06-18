@@ -27,7 +27,7 @@ namespace PaymentDetailApi.Application.Users.Commands
             await ValidateUniqueness(request, cancellationToken);
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
+            
             var user = DomainUser.Register(
                 request.UserName,
                 request.Email,

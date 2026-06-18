@@ -1,6 +1,4 @@
-﻿using PaymentDetailApi.Domain.Payment.Entities;
-
-namespace PaymentDetailApi.Domain.Shared
+﻿namespace PaymentDetailApi.Domain.Shared
 {
     public class Currency
     {

@@ -22,7 +22,7 @@ namespace PaymentDetailApi.Application.Common.Behaviors
             var response = await next();
 
             var aggregates = _context.ChangeTracker
-                .Entries<AggregateRoot>()
+                .Entries<Entity>()
                 .Select(e => e.Entity)
                 .Where(e => e.DomainEvents.Any())
                 .ToList();

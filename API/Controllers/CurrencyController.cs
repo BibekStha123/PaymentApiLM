@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.Currency;
@@ -6,7 +7,8 @@ using PaymentDetailApi.Application.Currency.Queries;
 
 namespace PaymentDetailApi.API.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Authorize]
+    [Route("api/v1/currencies")]
     [ApiController]
     public class CurrencyController : ControllerBase
     {
