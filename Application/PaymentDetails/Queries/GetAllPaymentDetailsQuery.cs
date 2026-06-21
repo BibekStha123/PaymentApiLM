@@ -20,7 +20,10 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
                 .Where(p => request.cursor == null || p.Id > request.cursor)
                 .OrderBy(p => p.Id)
                 .Take(request.limit + 1)
-                .Select(p => new PaymentDetailResponse(p.Id, p.CardOwnerName, p.CardNumber, p.ExpirationDate, p.SecurityCode, p.Active))
+                .Join(_context.Users,
+                    p => p.UserId,
+                    u => u.Id,
+                    (p, u) => new PaymentDetailResponse(p.Id, u.UserName, p.CardNumber, p.ExpirationDate, p.SecurityCode, p.Active))
                 .ToListAsync(cancellationToken);
 
             int? nextCursor = null;

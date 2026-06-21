@@ -17,7 +17,7 @@ namespace PaymentDetailApi.Infrastructure.EventHandlers.Payments
             {
                 Action = "Create",
                 PaymentId = domainEvent.PaymentDetails.Id,
-                Details = $"Payment created for {domainEvent.PaymentDetails.CardOwnerName}"
+                Details = $"Payment created for user {domainEvent.PaymentDetails.UserId}"
             });
 
             return Task.CompletedTask;

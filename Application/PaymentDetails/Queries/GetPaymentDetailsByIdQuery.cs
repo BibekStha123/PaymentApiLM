@@ -14,12 +14,18 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
         }
         public async Task<PaymentDetailResponse> Handle(GetPaymentDetailsByIdQuery request, CancellationToken cancellationToken)
         {
-            var payment = await _context.PaymentDetails.FirstOrDefaultAsync(p => p.Active && p.Id == request.id, cancellationToken);
+            var result = await _context.PaymentDetails
+                .Where(p => p.Active && p.Id == request.id)
+                .Join(_context.Users,
+                    p => p.UserId,
+                    u => u.Id,
+                    (p, u) => new PaymentDetailResponse(p.Id, u.UserName, p.CardNumber, p.ExpirationDate, p.SecurityCode, p.Active))
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (payment is null)
+            if (result is null)
                 throw new Exception($"Payment Details does not exist for {request.id}");
 
-            return new PaymentDetailResponse(payment.Id, payment.CardOwnerName, payment.CardNumber, payment.ExpirationDate, payment.SecurityCode, payment.Active);
+            return result;
         }
     }
 }

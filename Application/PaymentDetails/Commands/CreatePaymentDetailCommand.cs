@@ -6,7 +6,7 @@ using DomainPaymentDetail = PaymentDetailApi.Domain.Payment.Entities.PaymentDeta
 namespace PaymentDetailApi.Application.PaymentDetail.Commands
 {
     public record CreatePaymentDetailCommand(
-        string CardOwnerName,
+        Guid UserId,
         string CardNumber,
         string ExpirationDate,
         string SecurityCode) : ICommand<int>;
@@ -23,7 +23,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Commands
         public async Task<int> Handle(CreatePaymentDetailCommand request, CancellationToken cancellationToken)
         {
             var payment = new DomainPaymentDetail(
-                request.CardOwnerName,
+                request.UserId,
                 request.CardNumber,
                 request.ExpirationDate,
                 request.SecurityCode);

@@ -1,7 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentDetailApi.Application.Common;
+using PaymentDetailApi.Application.Products;
 using PaymentDetailApi.Application.Products.Commands;
+using PaymentDetailApi.Application.Products.Queries;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,18 +21,11 @@ namespace PaymentDetailApi.API.Controllers.Products
         {
             _mediator = mediator;
         }
-        // GET: api/<ProductsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<CursorPagedResponse<ProductResponse>>> Get([FromQuery] int? cursor, [FromQuery] int limit = 10)
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<ProductsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
+            var result = await _mediator.Send(new GetAllProductQuery(cursor, limit));
+            return Ok(result);
         }
 
         [HttpPost]
@@ -49,9 +46,14 @@ namespace PaymentDetailApi.API.Controllers.Products
         }
 
         // PUT api/<ProductsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<int>> Patch(int id, [FromBody] AddStockRequest request)
         {
+            var command = new AddStockCommand(id, request.stock);
+
+            var result = await _mediator.Send(command);
+
+            return result;
         }
 
         // DELETE api/<ProductsController>/5

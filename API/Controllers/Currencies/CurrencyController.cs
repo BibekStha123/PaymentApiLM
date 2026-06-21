@@ -5,7 +5,7 @@ using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.Currency;
 using PaymentDetailApi.Application.Currency.Queries;
 
-namespace PaymentDetailApi.API.Controllers
+namespace PaymentDetailApi.API.Controllers.Currencies
 {
     [Authorize]
     [Route("api/v1/currencies")]

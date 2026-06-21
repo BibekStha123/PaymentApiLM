@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaymentDetailApi.Application.Categories.Commands;
+using PaymentDetailApi.Application.Common;
 
 namespace PaymentDetailApi.API.Controllers.Categories
 {

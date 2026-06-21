@@ -4,8 +4,9 @@ using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {
-    public record GetPaymentDetailsByNameQuery(string name) : IRequest<PaymentDetailResponse>;
-    public class GetPaymentDetailsByNameQueryHandler : IRequestHandler<GetPaymentDetailsByNameQuery, PaymentDetailResponse>
+    public record GetPaymentDetailsByNameQuery(string name) : IRequest<List<PaymentDetailResponse>>;
+
+    public class GetPaymentDetailsByNameQueryHandler : IRequestHandler<GetPaymentDetailsByNameQuery, List<PaymentDetailResponse>>
     {
         private readonly PaymentDetailsContext _context;
         public GetPaymentDetailsByNameQueryHandler(PaymentDetailsContext context)
@@ -13,14 +14,19 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
             _context = context;
         }
 
-        public async Task<PaymentDetailResponse> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
+        public async Task<List<PaymentDetailResponse>> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
         {
-            var payment = await _context.PaymentDetails.FirstOrDefaultAsync(p => p.Active && p.CardOwnerName == request.name, cancellationToken);
+            var result = await _context.PaymentDetails
+                .Where(p => p.Active)
+                .Join(_context.Users,
+                    p => p.UserId,
+                    u => u.Id,
+                    (p, u) => new { p, u })
+                .Where(x => x.u.UserName == request.name)
+                .Select(x => new PaymentDetailResponse(x.p.Id, x.u.UserName, x.p.CardNumber, x.p.ExpirationDate, x.p.SecurityCode, x.p.Active))
+                .ToListAsync(cancellationToken);
 
-            if (payment is null)
-                throw new Exception($"Payment Details does not exist for {request.name}");
-
-            return new PaymentDetailResponse(payment.Id, payment.CardOwnerName, payment.CardNumber, payment.ExpirationDate, payment.SecurityCode, payment.Active);
+            return result;
         }
     }
 }

@@ -15,6 +15,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
         private Product() { } // for EF Core materialization
         private Product(string name, string description, decimal price, int stock, int categoryId, bool isActive)
         {
+            Validate(name, description, price, stock, categoryId);
             Name = name;
             Description = description;
             Price = price;
@@ -24,8 +25,36 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
         }
         public static Product Create(string name, string description, decimal price, int stock, int categoryId, bool isActive)
         {
-            // Add validation logic here if needed
             return new Product(name, description, price, stock, categoryId, isActive);
+        }
+
+        public void AddStock(int quantity)
+        {
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity to add must be greater than zero.", nameof(quantity));
+
+            Stock += quantity;
+        }
+
+        private static void Validate(string name, string description, decimal price, int stock, int categoryId)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Product name is required.", nameof(name));
+
+            if (name.Length > 200)
+                throw new ArgumentException("Product name must not exceed 200 characters.", nameof(name));
+
+            if (string.IsNullOrWhiteSpace(description))
+                throw new ArgumentException("Product description is required.", nameof(description));
+
+            if (price <= 0)
+                throw new ArgumentException("Product price must be greater than zero.", nameof(price));
+
+            if (stock < 0)
+                throw new ArgumentException("Product stock cannot be negative.", nameof(stock));
+
+            if (categoryId <= 0)
+                throw new ArgumentException("A valid category is required.", nameof(categoryId));
         }
     }
 }

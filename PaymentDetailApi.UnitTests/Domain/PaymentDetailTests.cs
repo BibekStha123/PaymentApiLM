@@ -6,23 +6,23 @@ namespace PaymentDetailApi.UnitTests.Domain;
 
 public class PaymentDetailTests
 {
-    private const string ValidName          = "John Doe";
+    private static readonly Guid ValidUserId      = Guid.NewGuid();
     private const string ValidCardNumber    = "1234567890123456";
     private const string ValidExpiration    = "12/25";
     private const string ValidSecurityCode3 = "123";
     private const string ValidSecurityCode4 = "1234";
 
     private static PaymentDetail CreateValid() =>
-        new(ValidName, ValidCardNumber, ValidExpiration, ValidSecurityCode3);
+        new(ValidUserId, ValidCardNumber, ValidExpiration, ValidSecurityCode3);
 
     // ── Constructor: happy path ──────────────────────────────────────────────
 
     [Fact]
     public void Constructor_ValidData_SetsPropertiesCorrectly()
     {
-        var payment = new PaymentDetail(ValidName, ValidCardNumber, ValidExpiration, ValidSecurityCode3);
+        var payment = new PaymentDetail(ValidUserId, ValidCardNumber, ValidExpiration, ValidSecurityCode3);
 
-        Assert.Equal(ValidName, payment.CardOwnerName);
+        Assert.Equal(ValidUserId, payment.UserId);
         Assert.Equal(ValidCardNumber, payment.CardNumber);
         Assert.Equal(ValidExpiration, payment.ExpirationDate);
         Assert.Equal(ValidSecurityCode3, payment.SecurityCode);
@@ -43,7 +43,7 @@ public class PaymentDetailTests
     [InlineData(ValidSecurityCode4)]
     public void Constructor_ValidSecurityCode_Succeeds(string code)
     {
-        var payment = new PaymentDetail(ValidName, ValidCardNumber, ValidExpiration, code);
+        var payment = new PaymentDetail(ValidUserId, ValidCardNumber, ValidExpiration, code);
         Assert.Equal(code, payment.SecurityCode);
     }
 
@@ -53,22 +53,19 @@ public class PaymentDetailTests
     [InlineData("06/30")]
     public void Constructor_ValidExpirationDate_Succeeds(string date)
     {
-        var payment = new PaymentDetail(ValidName, ValidCardNumber, date, ValidSecurityCode3);
+        var payment = new PaymentDetail(ValidUserId, ValidCardNumber, date, ValidSecurityCode3);
         Assert.Equal(date, payment.ExpirationDate);
     }
 
-    // ── Constructor: CardOwnerName validation ────────────────────────────────
+    // ── Constructor: UserId validation ───────────────────────────────────────
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void Constructor_BlankCardOwnerName_Throws(string? name)
+    [Fact]
+    public void Constructor_EmptyUserId_Throws()
     {
         var ex = Assert.Throws<ArgumentException>(() =>
-            new PaymentDetail(name!, ValidCardNumber, ValidExpiration, ValidSecurityCode3));
+            new PaymentDetail(Guid.Empty, ValidCardNumber, ValidExpiration, ValidSecurityCode3));
 
-        Assert.Contains("Card owner name is required", ex.Message);
+        Assert.Contains("UserId is required", ex.Message);
     }
 
     // ── Constructor: CardNumber validation ───────────────────────────────────
@@ -81,7 +78,7 @@ public class PaymentDetailTests
     public void Constructor_InvalidCardNumber_Throws(string cardNumber)
     {
         var ex = Assert.Throws<ArgumentException>(() =>
-            new PaymentDetail(ValidName, cardNumber, ValidExpiration, ValidSecurityCode3));
+            new PaymentDetail(ValidUserId, cardNumber, ValidExpiration, ValidSecurityCode3));
 
         Assert.Contains("Card number must be exactly 16 digits", ex.Message);
     }
@@ -97,7 +94,7 @@ public class PaymentDetailTests
     public void Constructor_InvalidExpirationDate_Throws(string date)
     {
         var ex = Assert.Throws<ArgumentException>(() =>
-            new PaymentDetail(ValidName, ValidCardNumber, date, ValidSecurityCode3));
+            new PaymentDetail(ValidUserId, ValidCardNumber, date, ValidSecurityCode3));
 
         Assert.Contains("Expiration date must be in MM/YY format", ex.Message);
     }
@@ -112,7 +109,7 @@ public class PaymentDetailTests
     public void Constructor_InvalidSecurityCode_Throws(string code)
     {
         var ex = Assert.Throws<ArgumentException>(() =>
-            new PaymentDetail(ValidName, ValidCardNumber, ValidExpiration, code));
+            new PaymentDetail(ValidUserId, ValidCardNumber, ValidExpiration, code));
 
         Assert.Contains("Security code must be 3 or 4 digits", ex.Message);
     }

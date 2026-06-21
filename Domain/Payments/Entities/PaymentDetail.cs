@@ -6,18 +6,18 @@ namespace PaymentDetailApi.Domain.Payment.Entities
     public class PaymentDetail : Entity
     {
         public int Id { get; private set; }
-        public string CardOwnerName { get; private set; }
+        public Guid UserId { get; private set; }
         public string CardNumber { get; private set; }
         public string ExpirationDate { get; private set; }
         public string SecurityCode { get; private set; }
         public bool Active { get; private set; }
         private PaymentDetail() { } // for EF Core materialization
 
-        public PaymentDetail(string cardOwnerName, string cardNumber, string expirationDate, string securityCode)
+        public PaymentDetail(Guid userId, string cardNumber, string expirationDate, string securityCode)
         {
-            Validate(cardOwnerName, cardNumber, expirationDate, securityCode);
+            Validate(userId, cardNumber, expirationDate, securityCode);
 
-            CardOwnerName = cardOwnerName;
+            UserId = userId;
             CardNumber = cardNumber;
             ExpirationDate = expirationDate;
             SecurityCode = securityCode;
@@ -32,10 +32,10 @@ namespace PaymentDetailApi.Domain.Payment.Entities
             AddDomainEvent(new PaymentDeletedDomainEvent(this));
         }
 
-        private static void Validate(string cardOwnerName, string cardNumber, string expirationDate, string securityCode)
+        private static void Validate(Guid userId, string cardNumber, string expirationDate, string securityCode)
         {
-            if (string.IsNullOrWhiteSpace(cardOwnerName))
-                throw new ArgumentException("Card owner name is required.", nameof(cardOwnerName));
+            if (userId == Guid.Empty)
+                throw new ArgumentException("UserId is required.", nameof(userId));
 
             if (string.IsNullOrWhiteSpace(cardNumber) || !System.Text.RegularExpressions.Regex.IsMatch(cardNumber, @"^\d{16}$"))
                 throw new ArgumentException("Card number must be exactly 16 digits.", nameof(cardNumber));

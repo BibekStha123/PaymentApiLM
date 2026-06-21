@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.RateLimiting;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.PaymentDetail.Commands;
 using PaymentDetailApi.Application.PaymentDetail.Queries;
-using PaymentDetailApi.Domain.Payment.Entities;
+using PaymentDetailApi.Application.PaymentDetail;
+using System.Security.Claims;
 
-namespace PaymentDetailApi.API.Controllers
+namespace PaymentDetailApi.API.Controllers.PaymentDetails
 {
     [Authorize]
     [EnableRateLimiting("sliding")]
@@ -139,7 +140,7 @@ namespace PaymentDetailApi.API.Controllers
 
         // GET: api/PaymentDetail
         [HttpGet]
-        public async Task<ActionResult<CursorPagedResponse<PaymentDetail>>> GetPaymentDetails([FromQuery] int? cursor, [FromQuery] int limit = 10)
+        public async Task<ActionResult<CursorPagedResponse<PaymentDetailResponse>>> GetPaymentDetails([FromQuery] int? cursor, [FromQuery] int limit = 10)
         {
             var result = await _mediator.Send(new GetAllPaymentDetailsQuery(cursor, limit));
             return Ok(result);
@@ -147,19 +148,29 @@ namespace PaymentDetailApi.API.Controllers
 
         // GET: api/PaymentDetail/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PaymentDetail>> GetPaymentDetails(int id)
+        public async Task<ActionResult<PaymentDetailResponse>> GetPaymentDetails(int id)
         {
             var result = await _mediator.Send(new GetPaymentDetailsByIdQuery(id));
 
             return Ok(result);
         }
 
-        // GET: api/PaymentDetail/name
+        [HttpGet("my-cards")]
+        public async Task<ActionResult<List<PaymentDetailResponse>>> GetMyCards()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            var result = await _mediator.Send(new GetPaymentDetailsByUserIdQuery(userId));
+            return Ok(result);
+        }
+
+        // GET: api/payment-details/name/{name}
         [HttpGet("name/{name}")]
-        public async Task<ActionResult<PaymentDetail>> GetPaymentDetailsByName(string name)
+        public async Task<ActionResult<List<PaymentDetailResponse>>> GetPaymentDetailsByName(string name)
         {
             var result = await _mediator.Send(new GetPaymentDetailsByNameQuery(name));
-
             return Ok(result);
         }
 
@@ -194,11 +205,14 @@ namespace PaymentDetailApi.API.Controllers
         //    return Ok(await _context.PaymentDetails.ToListAsync());
         //}
 
-        // POST: api/PaymentDetail
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<int>> PostPaymentDetails(CreatePaymentDetailCommand command)
+        public async Task<ActionResult<int>> PostPaymentDetails([FromBody] PaymentDetailRequest request)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            var command = new CreatePaymentDetailCommand(userId, request.CardNumber, request.ExpirationDate, request.SecurityCode);
             return Ok(await _mediator.Send(command));
         }
 
