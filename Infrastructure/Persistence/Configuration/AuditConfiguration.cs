@@ -1,25 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PaymentDetailApi.Infrastructure.Persistence.Entities;
+using PaymentDetailApi.Domain.Shared;
 
 namespace PaymentDetailApi.Infrastructure.Persistence.Configuration
 {
-    public class AuditConfiguration : IEntityTypeConfiguration<AuditLog>
+    public class AuditConfiguration : IEntityTypeConfiguration<Log>
     {
-        public void Configure(EntityTypeBuilder<AuditLog> builder)
+        public void Configure(EntityTypeBuilder<Log> builder)
         {
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Action)
                 .HasColumnType("nvarchar(50)");
 
+            builder.Property(x => x.EntityName)
+                .HasColumnType("nvarchar(100)");
+
             builder.Property(x => x.Details)
                 .HasColumnType("nvarchar(200)");
-
-            builder.HasOne(x => x.Payment)
-                .WithMany()
-                .HasForeignKey(x => x.PaymentId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

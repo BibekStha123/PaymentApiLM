@@ -1,5 +1,6 @@
 ﻿using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Domain.Shared;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Infrastructure.EventHandlers.Payments
@@ -13,12 +14,12 @@ namespace PaymentDetailApi.Infrastructure.EventHandlers.Payments
         }
         public Task Handle(PaymentCreatedDomainEvent domainEvent)
         {
-            _context.AuditLogs.Add(new Persistence.Entities.AuditLog
-            {
-                Action = "Create",
-                PaymentId = domainEvent.PaymentDetails.Id,
-                Details = $"Payment created for user {domainEvent.PaymentDetails.UserId}"
-            });
+            _context.Logs.Add(Log.Create(
+                "Create",
+                "Payment",
+                domainEvent.PaymentDetails.Id,
+                $"Payment created for user {domainEvent.PaymentDetails.UserId}"
+            ));
 
             return Task.CompletedTask;
         }

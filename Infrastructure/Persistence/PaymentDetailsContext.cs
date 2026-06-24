@@ -5,7 +5,6 @@ using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Domain.Shared;
 using PaymentDetailApi.Domain.User.Entities;
-using PaymentDetailApi.Infrastructure.Persistence.Entities;
 
 namespace PaymentDetailApi.Infrastructure.Persistence
 {
@@ -16,7 +15,7 @@ namespace PaymentDetailApi.Infrastructure.Persistence
         {
         }
         public DbSet<PaymentDetail> PaymentDetails { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<Log> Logs { get; set; }
         public DbSet<Currency> Currency { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }

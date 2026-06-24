@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PaymentDetailApi.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using PaymentDetailApi.Infrastructure.Persistence;
 namespace PaymentDetailApi.Migrations
 {
     [DbContext(typeof(PaymentDetailsContext))]
-    partial class PaymentDetailsContextModelSnapshot : ModelSnapshot
+    [Migration("20260624123915_RenameAuditLogToLog")]
+    partial class RenameAuditLogToLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

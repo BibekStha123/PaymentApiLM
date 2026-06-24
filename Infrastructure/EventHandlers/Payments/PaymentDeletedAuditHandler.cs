@@ -1,5 +1,6 @@
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Domain.Shared;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Infrastructure.EventHandlers.Payments
@@ -14,12 +15,12 @@ namespace PaymentDetailApi.Infrastructure.EventHandlers.Payments
 
         public Task Handle(PaymentDeletedDomainEvent domainEvent)
         {
-            _context.AuditLogs.Add(new Persistence.Entities.AuditLog
-            {
-                Action = "Delete",
-                PaymentId = domainEvent.PaymentDetails.Id,
-                Details = $"Payment deleted for {domainEvent.PaymentDetails.Id}"
-            });
+            _context.Logs.Add(Log.Create(
+                "Delete",
+                "Payment",
+                domainEvent.PaymentDetails.Id,
+                $"Payment deleted for {domainEvent.PaymentDetails.Id}"
+            ));
 
             return Task.CompletedTask;
         }

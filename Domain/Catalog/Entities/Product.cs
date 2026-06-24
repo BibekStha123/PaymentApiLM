@@ -34,6 +34,8 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
                 throw new ArgumentException("Quantity to add must be greater than zero.", nameof(quantity));
 
             Stock += quantity;
+
+
         }
 
         private static void Validate(string name, string description, decimal price, int stock, int categoryId)
