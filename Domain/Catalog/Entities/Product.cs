@@ -1,4 +1,5 @@
-﻿using PaymentDetailApi.Domain.Common;
+﻿using PaymentDetailApi.Domain.Catalog.Events;
+using PaymentDetailApi.Domain.Common;
 
 namespace PaymentDetailApi.Domain.Catalog.Entities
 {
@@ -35,7 +36,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
 
             Stock += quantity;
 
-
+            AddDomainEvent(new ProductStockAddedDomainEvent(this, quantity));
         }
 
         private static void Validate(string name, string description, decimal price, int stock, int categoryId)
