@@ -3,7 +3,7 @@ using PaymentDetailApi.Domain.Users.Events;
 
 namespace PaymentDetailApi.Domain.User.Entities
 {
-    public class User : Entity
+    public class User : AggregateRoot
     {
         public Guid Id { get; private set; }
         public string UserName { get; private set; }

@@ -3,7 +3,7 @@ using PaymentDetailApi.Domain.Common;
 
 namespace PaymentDetailApi.Domain.Catalog.Entities
 {
-    public class Product : Entity
+    public class Product : AggregateRoot
     {
         public int Id { get; private set; }
         public string Name { get; private set; }

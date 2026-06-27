@@ -2,7 +2,7 @@
 
 namespace PaymentDetailApi.Domain.Catalog.Entities
 {
-    public class Category : Entity
+    public class Category : AggregateRoot
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
