@@ -18,7 +18,7 @@ namespace PaymentDetailApi.API.Controllers.Currencies
             _mediator = mediator;
         }
         [HttpGet]
-        public async Task<ActionResult<CursorPagedResponse<CurrencyResponse>>> Get([FromQuery] int? cursor, [FromQuery] int limit = 10)
+        public async Task<ActionResult<CursorPagedResponse<CurrencyResponse>>> Get([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
         {
             var result = await _mediator.Send(new GetAllCurrencyQuery(cursor, limit));
             return Ok(result);

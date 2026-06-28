@@ -5,7 +5,6 @@ namespace PaymentDetailApi.Domain.User.Entities
 {
     public class User : AggregateRoot
     {
-        public Guid Id { get; private set; }
         public string UserName { get; private set; }
         public string Email { get; private set; }
         public string PasswordHash { get; private set; }
@@ -22,7 +21,6 @@ namespace PaymentDetailApi.Domain.User.Entities
 
             var user = new User
             {
-                Id = Guid.CreateVersion7(),
                 UserName = userName,
                 Email = email.ToLowerInvariant(),
                 PasswordHash = passwordHash,

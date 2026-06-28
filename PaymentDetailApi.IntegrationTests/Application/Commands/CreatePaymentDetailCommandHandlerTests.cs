@@ -31,11 +31,11 @@ public class CreatePaymentDetailCommandHandlerTests : IDisposable
         new(ValidUserId, ValidCardNumber, ValidExpiration, ValidSecurityCode);
 
     [Fact]
-    public async Task Handle_ValidCommand_ReturnsPositiveId()
+    public async Task Handle_ValidCommand_ReturnsNonEmptyId()
     {
         var id = await _handler.Handle(ValidCommand(), CancellationToken.None);
 
-        Assert.True(id > 0);
+        Assert.NotEqual(Guid.Empty, id);
     }
 
     [Fact]

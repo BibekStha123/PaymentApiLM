@@ -1,7 +1,7 @@
 ﻿namespace PaymentDetailApi.Application.Currency
 {
     public record CurrencyResponse(
-        int Id,
+        Guid Id,
         string CurrencyCode,
         string Name
     );

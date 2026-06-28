@@ -4,7 +4,7 @@ using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {
-    public record GetPaymentDetailsByIdQuery(int id) : IRequest<PaymentDetailResponse>;
+    public record GetPaymentDetailsByIdQuery(Guid id) : IRequest<PaymentDetailResponse>;
     public class GetPaymentDetailsByIdQueryHandler : IRequestHandler<GetPaymentDetailsByIdQuery, PaymentDetailResponse>
     {
         private readonly PaymentDetailsContext _context;

@@ -19,7 +19,7 @@ namespace PaymentDetailApi.API.Controllers.Categories
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> CreateCategory([FromBody] CategoryRequest request)
+        public async Task<ActionResult<Guid>> CreateCategory([FromBody] CategoryRequest request)
         {
             var command = new CreateCategoryCommand(request.Name, request.Type);
 

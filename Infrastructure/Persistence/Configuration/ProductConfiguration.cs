@@ -9,6 +9,8 @@ namespace PaymentDetailApi.Infrastructure.Persistence.Configuration
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.HasKey(p => p.Id);
+            builder.Property(u => u.Id)
+                .ValueGeneratedNever();
 
             builder.Property(p => p.Name)
                 .IsRequired()

@@ -4,7 +4,7 @@ using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Products.Commands
 {
-    public record AddStockCommand(int Id, int Stock) : ICommand<int>;
+    public record AddStockCommand(Guid Id, int Stock) : ICommand<int>;
 
     public class AddStockCommandHanlder : IRequestHandler<AddStockCommand, int>
     {

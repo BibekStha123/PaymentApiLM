@@ -5,6 +5,6 @@
         string Description,
         decimal Price,
         int Stock,
-        int CategoryId,
+        Guid CategoryId,
         bool IsActive);
 }

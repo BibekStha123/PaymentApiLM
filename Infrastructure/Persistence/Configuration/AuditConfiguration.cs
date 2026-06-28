@@ -9,6 +9,8 @@ namespace PaymentDetailApi.Infrastructure.Persistence.Configuration
         public void Configure(EntityTypeBuilder<Log> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.Property(u => u.Id)
+                .ValueGeneratedNever();
 
             builder.Property(x => x.Action)
                 .HasColumnType("nvarchar(50)");

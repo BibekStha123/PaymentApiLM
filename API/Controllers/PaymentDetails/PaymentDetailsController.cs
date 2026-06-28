@@ -140,7 +140,7 @@ namespace PaymentDetailApi.API.Controllers.PaymentDetails
 
         // GET: api/PaymentDetail
         [HttpGet]
-        public async Task<ActionResult<CursorPagedResponse<PaymentDetailResponse>>> GetPaymentDetails([FromQuery] int? cursor, [FromQuery] int limit = 10)
+        public async Task<ActionResult<CursorPagedResponse<PaymentDetailResponse>>> GetPaymentDetails([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
         {
             var result = await _mediator.Send(new GetAllPaymentDetailsQuery(cursor, limit));
             return Ok(result);
@@ -148,7 +148,7 @@ namespace PaymentDetailApi.API.Controllers.PaymentDetails
 
         // GET: api/PaymentDetail/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PaymentDetailResponse>> GetPaymentDetails(int id)
+        public async Task<ActionResult<PaymentDetailResponse>> GetPaymentDetails(Guid id)
         {
             var result = await _mediator.Send(new GetPaymentDetailsByIdQuery(id));
 

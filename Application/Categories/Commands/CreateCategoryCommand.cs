@@ -5,9 +5,9 @@ using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Categories.Commands
 {
-    public record CreateCategoryCommand(string Name, string Type) : ICommand<int>;
+    public record CreateCategoryCommand(string Name, string Type) : ICommand<Guid>;
 
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, int>
+    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Guid>
     {
         private readonly PaymentDetailsContext _context;
 
@@ -16,7 +16,7 @@ namespace PaymentDetailApi.Application.Categories.Commands
             _context = context;
         }
 
-        public async Task<int> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = Category.Create(request.Name, request.Type);
 

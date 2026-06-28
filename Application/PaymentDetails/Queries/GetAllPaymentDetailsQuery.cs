@@ -5,7 +5,7 @@ using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.PaymentDetail.Queries
 {
-    public record GetAllPaymentDetailsQuery(int? cursor, int limit) : IRequest<CursorPagedResponse<PaymentDetailResponse>>;
+    public record GetAllPaymentDetailsQuery(Guid? cursor, int limit) : IRequest<CursorPagedResponse<PaymentDetailResponse>>;
     public class GetAllPaymentDetailsQueryHandler : IRequestHandler<GetAllPaymentDetailsQuery, CursorPagedResponse<PaymentDetailResponse>>
     {
         private readonly PaymentDetailsContext _context;
@@ -17,7 +17,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
         {
             var items = await _context.PaymentDetails
                 .Where(p => p.Active)
-                .Where(p => request.cursor == null || p.Id > request.cursor)
+                .Where(p => request.cursor == null || p.Id.CompareTo(request.cursor.Value) > 0)
                 .OrderBy(p => p.Id)
                 .Take(request.limit + 1)
                 .Join(_context.Users,
@@ -26,7 +26,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
                     (p, u) => new PaymentDetailResponse(p.Id, u.UserName, p.CardNumber, p.ExpirationDate, p.SecurityCode, p.Active))
                 .ToListAsync(cancellationToken);
 
-            int? nextCursor = null;
+            Guid? nextCursor = null;
             if(items.Count > request.limit)
             {
                 items.RemoveAt(items.Count - 1);

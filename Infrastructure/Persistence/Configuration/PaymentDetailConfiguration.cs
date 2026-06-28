@@ -11,6 +11,9 @@ namespace PaymentDetailApi.Infrastructure.Persistence.Configuration
         {
             builder.ToTable("PaymentDetails", t => t.HasTrigger("[trg_AfterPaymentDetailsInsert]"));
 
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.Id).ValueGeneratedNever();
+
             builder.Property(p => p.UserId).IsRequired();
 
             builder.HasOne<User>()

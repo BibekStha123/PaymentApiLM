@@ -11,18 +11,18 @@ namespace PaymentDetailApi.Application.Products.Commands
         string Description,
         decimal Price,
         int Stock,
-        int CategoryId,
+        Guid CategoryId,
         bool IsActive
-    ) : ICommand<int>;
+    ) : ICommand<Guid>;
 
-    public class CreateProductCommandHanlder : IRequestHandler<CreateProductCommand, int>
+    public class CreateProductCommandHanlder : IRequestHandler<CreateProductCommand, Guid>
     {
         private readonly PaymentDetailsContext _dbContext;
         public CreateProductCommandHanlder(PaymentDetailsContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             Product product = Product.Create(
                 request.Name,

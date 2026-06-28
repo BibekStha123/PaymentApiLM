@@ -9,9 +9,9 @@ namespace PaymentDetailApi.Application.PaymentDetail.Commands
         Guid UserId,
         string CardNumber,
         string ExpirationDate,
-        string SecurityCode) : ICommand<int>;
+        string SecurityCode) : ICommand<Guid>;
 
-    public class CreatePaymentDetailCommandHandler : IRequestHandler<CreatePaymentDetailCommand, int>
+    public class CreatePaymentDetailCommandHandler : IRequestHandler<CreatePaymentDetailCommand, Guid>
     {
         private readonly PaymentDetailsContext _context;
 
@@ -20,7 +20,7 @@ namespace PaymentDetailApi.Application.PaymentDetail.Commands
             _context = context;
         }
 
-        public async Task<int> Handle(CreatePaymentDetailCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreatePaymentDetailCommand request, CancellationToken cancellationToken)
         {
             var payment = new DomainPaymentDetail(
                 request.UserId,

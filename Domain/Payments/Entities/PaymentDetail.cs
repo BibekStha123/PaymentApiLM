@@ -5,7 +5,6 @@ namespace PaymentDetailApi.Domain.Payment.Entities
 {
     public class PaymentDetail : AggregateRoot
     {
-        public int Id { get; private set; }
         public Guid UserId { get; private set; }
         public string CardNumber { get; private set; }
         public string ExpirationDate { get; private set; }

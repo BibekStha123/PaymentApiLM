@@ -1,7 +1,7 @@
 namespace PaymentDetailApi.Application.PaymentDetail
 {
     public record PaymentDetailResponse(
-        int Id,
+        Guid Id,
         string CardOwnerName,
         string CardNumber,
         string ExpirationDate,

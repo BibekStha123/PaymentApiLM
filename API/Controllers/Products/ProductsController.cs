@@ -22,14 +22,14 @@ namespace PaymentDetailApi.API.Controllers.Products
             _mediator = mediator;
         }
         [HttpGet]
-        public async Task<ActionResult<CursorPagedResponse<ProductResponse>>> Get([FromQuery] int? cursor, [FromQuery] int limit = 10)
+        public async Task<ActionResult<CursorPagedResponse<ProductResponse>>> Get([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
         {
             var result = await _mediator.Send(new GetAllProductQuery(cursor, limit));
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post([FromBody] ProductRequest request)
+        public async Task<ActionResult<Guid>> Post([FromBody] ProductRequest request)
         {
             var command = new CreateProductCommand(
                     request.Name,
@@ -47,7 +47,7 @@ namespace PaymentDetailApi.API.Controllers.Products
 
         // PUT api/<ProductsController>/5
         [HttpPatch("{id}")]
-        public async Task<ActionResult<int>> Patch(int id, [FromBody] AddStockRequest request)
+        public async Task<ActionResult<int>> Patch(Guid id, [FromBody] AddStockRequest request)
         {
             var command = new AddStockCommand(id, request.stock);
 
@@ -58,7 +58,7 @@ namespace PaymentDetailApi.API.Controllers.Products
 
         // DELETE api/<ProductsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
         }
     }

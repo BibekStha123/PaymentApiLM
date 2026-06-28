@@ -5,16 +5,15 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
 {
     public class Product : AggregateRoot
     {
-        public int Id { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public decimal Price { get; private set; }
         public int Stock { get; private set; }
-        public int CategoryId { get; private set; }
+        public Guid CategoryId { get; private set; }
         public bool IsActive { get; private set; }
 
         private Product() { } // for EF Core materialization
-        private Product(string name, string description, decimal price, int stock, int categoryId, bool isActive)
+        private Product(string name, string description, decimal price, int stock, Guid categoryId, bool isActive)
         {
             Validate(name, description, price, stock, categoryId);
             Name = name;
@@ -24,7 +23,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             CategoryId = categoryId;
             IsActive = isActive;
         }
-        public static Product Create(string name, string description, decimal price, int stock, int categoryId, bool isActive)
+        public static Product Create(string name, string description, decimal price, int stock, Guid categoryId, bool isActive)
         {
             return new Product(name, description, price, stock, categoryId, isActive);
         }
@@ -39,7 +38,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             AddDomainEvent(new ProductStockAddedDomainEvent(this, quantity));
         }
 
-        private static void Validate(string name, string description, decimal price, int stock, int categoryId)
+        private static void Validate(string name, string description, decimal price, int stock, Guid categoryId)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Product name is required.", nameof(name));
@@ -56,7 +55,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             if (stock < 0)
                 throw new ArgumentException("Product stock cannot be negative.", nameof(stock));
 
-            if (categoryId <= 0)
+            if (categoryId == Guid.Empty)
                 throw new ArgumentException("A valid category is required.", nameof(categoryId));
         }
     }

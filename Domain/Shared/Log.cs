@@ -4,16 +4,15 @@ namespace PaymentDetailApi.Domain.Shared
 {
     public class Log : Entity
     {
-        public int Id { get; private set; }
         public string Action { get; private set; } = string.Empty;
         public string EntityName { get; private set; } = string.Empty;
-        public int EntityId { get; private set; }
+        public Guid EntityId { get; private set; }
         public string Details { get; private set; } = string.Empty;
         public DateTime Timestamp { get; private set; }
 
         private Log() { }
 
-        public static Log Create(string action, string entityName, int entityId, string details)
+        public static Log Create(string action, string entityName, Guid entityId, string details)
         {
             return new Log
             {

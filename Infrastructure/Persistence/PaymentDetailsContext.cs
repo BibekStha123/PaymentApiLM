@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using PaymentDetailApi.Domain.Catalog.Entities;
 using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.Orders.Entities;
 using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Domain.Shared;
 using PaymentDetailApi.Domain.User.Entities;
@@ -20,6 +21,8 @@ namespace PaymentDetailApi.Infrastructure.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

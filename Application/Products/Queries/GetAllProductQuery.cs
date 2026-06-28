@@ -5,7 +5,7 @@ using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Products.Queries
 {
-    public record GetAllProductQuery(int? Cursor, int Limit) : IRequest<CursorPagedResponse<ProductResponse>>;
+    public record GetAllProductQuery(Guid? Cursor, int Limit) : IRequest<CursorPagedResponse<ProductResponse>>;
 
     public class GetAllProductQueryHanlder : IRequestHandler<GetAllProductQuery, CursorPagedResponse<ProductResponse>>
     {
@@ -17,7 +17,7 @@ namespace PaymentDetailApi.Application.Products.Queries
         public async Task<CursorPagedResponse<ProductResponse>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
             var items = await _context.Products
-                .Where(p => request.Cursor == null || p.Id > request.Cursor)
+                .Where(p => request.Cursor == null || p.Id.CompareTo(request.Cursor.Value) > 0)
                 .OrderBy(p => p.Id)
                 .Take(request.Limit + 1)
                 .Join(_context.Categories,
@@ -26,7 +26,7 @@ namespace PaymentDetailApi.Application.Products.Queries
                       (p, c) => new ProductResponse(p.Id, p.Name, p.Description, p.Price, p.Stock, c.Name))
                 .ToListAsync(cancellationToken);
 
-            int? nextCursor = null;
+            Guid? nextCursor = null;
             if (items.Count > request.Limit)
             {
                 items.RemoveAt(items.Count - 1);

@@ -7,9 +7,11 @@ using PaymentDetailApi.Application.Common.Behaviors;
 using PaymentDetailApi.Application.Common.Interfaces;
 using PaymentDetailApi.Domain.Catalog.Events;
 using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.Orders.Events;
 using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure.Auth;
 using PaymentDetailApi.Infrastructure.DomainEvents;
+using PaymentDetailApi.Infrastructure.EventHandlers.Orders;
 using PaymentDetailApi.Infrastructure.EventHandlers.Payments;
 using PaymentDetailApi.Infrastructure.EventHandlers.Products;
 using PaymentDetailApi.Infrastructure.Persistence;
@@ -71,6 +73,7 @@ builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentCreatedDomainEvent>, PaymentCreatedAuditHandler>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentDeletedDomainEvent>, PaymentDeletedAuditHandler>();
 builder.Services.AddScoped<IDomainEventHandler<ProductStockAddedDomainEvent>, ProductStockAddedEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedEventHandler>();
 
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 

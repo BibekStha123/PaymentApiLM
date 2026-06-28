@@ -1,37 +1,33 @@
+using PaymentDetailApi.Domain.Common;
+
 namespace PaymentDetailApi.Domain.Orders.Entities
 {
-    public class OrderItem
+    public class OrderItem : Entity
     {
-        public int Id { get; private set; }
         public Guid OrderId { get; private set; }
-        public int ProductId { get; private set; }
-        public string ProductName { get; private set; }
+        public Guid ProductId { get; private set; }
         public decimal UnitPrice { get; private set; }
         public int Quantity { get; private set; }
         public decimal TotalPrice => UnitPrice * Quantity;
 
         private OrderItem() { }
 
-        private OrderItem(Guid orderId, int productId, string productName, decimal unitPrice, int quantity)
+        private OrderItem(Guid orderId, Guid productId, decimal unitPrice, int quantity)
         {
-            Validate(productId, productName, unitPrice, quantity);
+            Validate(productId, unitPrice, quantity);
             OrderId = orderId;
             ProductId = productId;
-            ProductName = productName;
             UnitPrice = unitPrice;
             Quantity = quantity;
         }
 
-        internal static OrderItem Create(Guid orderId, int productId, string productName, decimal unitPrice, int quantity)
-            => new(orderId, productId, productName, unitPrice, quantity);
+        internal static OrderItem Create(Guid orderId, Guid productId, decimal unitPrice, int quantity)
+            => new(orderId, productId, unitPrice, quantity);
 
-        private static void Validate(int productId, string productName, decimal unitPrice, int quantity)
+        private static void Validate(Guid productId, decimal unitPrice, int quantity)
         {
-            if (productId <= 0)
+            if (productId == Guid.Empty)
                 throw new ArgumentException("A valid product is required.", nameof(productId));
-
-            if (string.IsNullOrWhiteSpace(productName))
-                throw new ArgumentException("Product name is required.", nameof(productName));
 
             if (unitPrice <= 0)
                 throw new ArgumentException("Unit price must be greater than zero.", nameof(unitPrice));
