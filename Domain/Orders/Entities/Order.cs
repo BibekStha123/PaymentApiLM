@@ -30,7 +30,9 @@ namespace PaymentDetailApi.Domain.Orders.Entities
         }
 
         public static Order Create(Guid userId, string shippingAddress, Guid currencyId)
-            => new(userId, shippingAddress, currencyId);
+        {
+            return new Order(userId, shippingAddress, currencyId);
+        }
 
         public void AddItem(Guid productId, decimal unitPrice, int quantity)
         {

@@ -12,6 +12,7 @@ using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure.Auth;
 using PaymentDetailApi.Infrastructure.DomainEvents;
 using PaymentDetailApi.Infrastructure.EventHandlers.Orders;
+using PaymentDetailApi.Infrastructure.Notification;
 using PaymentDetailApi.Infrastructure.EventHandlers.Payments;
 using PaymentDetailApi.Infrastructure.EventHandlers.Products;
 using PaymentDetailApi.Infrastructure.Persistence;
@@ -75,6 +76,7 @@ builder.Services.AddScoped<IDomainEventHandler<PaymentDeletedDomainEvent>, Payme
 builder.Services.AddScoped<IDomainEventHandler<ProductStockAddedDomainEvent>, ProductStockAddedEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedEventHandler>();
 
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

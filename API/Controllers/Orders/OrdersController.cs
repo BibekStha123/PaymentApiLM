@@ -1,7 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentDetailApi.Application.Common;
+using PaymentDetailApi.Application.Orders;
 using PaymentDetailApi.Application.Orders.Commands;
+using PaymentDetailApi.Application.Orders.Queries;
 using System.Security.Claims;
 
 namespace PaymentDetailApi.API.Controllers.Orders
@@ -33,6 +36,12 @@ namespace PaymentDetailApi.API.Controllers.Orders
             );
 
             return Ok(await _mediator.Send(command));
+        }
+        [HttpGet]
+        public async Task<ActionResult<CursorPagedResponse<OrderResponse>>> Get([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
+        {
+            var result = await _mediator.Send(new GetAllOrderQuery(cursor, limit));
+            return Ok(result);
         }
     }
 }
