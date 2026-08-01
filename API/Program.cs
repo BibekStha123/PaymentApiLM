@@ -74,6 +74,7 @@ builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentCreatedDomainEvent>, PaymentCreatedAuditHandler>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentDeletedDomainEvent>, PaymentDeletedAuditHandler>();
 builder.Services.AddScoped<IDomainEventHandler<ProductStockAddedDomainEvent>, ProductStockAddedEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<ProductStockRemovedDomainEvent>, ProductStockRemovedEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedEventHandler>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();

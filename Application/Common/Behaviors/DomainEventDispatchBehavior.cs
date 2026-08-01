@@ -20,7 +20,7 @@ namespace PaymentDetailApi.Application.Common.Behaviors
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var response = await next();
-
+            //this runs after actual command handler has completed
             var aggregates = _context.ChangeTracker
                 .Entries<AggregateRoot>()
                 .Select(e => e.Entity)

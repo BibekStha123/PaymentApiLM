@@ -35,6 +35,7 @@ namespace PaymentDetailApi.Application.Orders.Commands
                     .FirstOrDefaultAsync(p => p.Id == item.ProductId, cancellationToken)
                     ?? throw new InvalidOperationException($"Product {item.ProductId} not found.");
 
+                product.RemoveStock(item.Quantity);
                 order.AddItem(product.Id, product.Price, item.Quantity);
             }
 

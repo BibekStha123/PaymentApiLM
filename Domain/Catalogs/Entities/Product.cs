@@ -38,6 +38,19 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             AddDomainEvent(new ProductStockAddedDomainEvent(this, quantity));
         }
 
+        public void RemoveStock(int quantity)
+        {
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity to remove must be greater than zero.", nameof(quantity));
+
+            if (quantity > Stock)
+                throw new InvalidOperationException($"Insufficient stock for product '{Name}'. Available: {Stock}, requested: {quantity}.");
+
+            Stock -= quantity;
+
+            AddDomainEvent(new ProductStockRemovedDomainEvent(this, quantity));
+        }
+
         private static void Validate(string name, string description, decimal price, int stock, Guid categoryId)
         {
             if (string.IsNullOrWhiteSpace(name))
