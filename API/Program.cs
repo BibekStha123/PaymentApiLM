@@ -113,18 +113,74 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
 {
     var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+    var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
+        .CreateLogger("GlobalExceptionHandler");
 
-    if (error is ValidationException validationException)
+    context.Response.ContentType = "application/json";
+
+    switch (error)
     {
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        await context.Response.WriteAsJsonAsync(new
-        {
-            errors = validationException.Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
-        });
-        return;
-    }
+        case ValidationException validationException:
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                title = "Validation Failed",
+                status = StatusCodes.Status400BadRequest,
+                errors = validationException.Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
+            });
+            break;
 
-    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        case KeyNotFoundException notFoundException:
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                title = "Not Found",
+                status = StatusCodes.Status404NotFound,
+                detail = notFoundException.Message
+            });
+            break;
+
+        case UnauthorizedAccessException unauthorizedException:
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                title = "Unauthorized",
+                status = StatusCodes.Status401Unauthorized,
+                detail = unauthorizedException.Message
+            });
+            break;
+
+        case InvalidOperationException invalidOperationException:
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                title = "Conflict",
+                status = StatusCodes.Status409Conflict,
+                detail = invalidOperationException.Message
+            });
+            break;
+
+        case ArgumentException argumentException:
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                title = "Bad Request",
+                status = StatusCodes.Status400BadRequest,
+                detail = argumentException.Message
+            });
+            break;
+
+        default:
+            logger.LogError(error, "Unhandled exception occurred while processing {Method} {Path}",
+                context.Request.Method, context.Request.Path);
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                title = "An unexpected error occurred",
+                status = StatusCodes.Status500InternalServerError
+            });
+            break;
+    }
 }));
 
 app.UseCors(options =>

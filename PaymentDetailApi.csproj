@@ -26,6 +26,10 @@
     <Content Remove="PaymentDetailApi.IntegrationTests\**" />
     <None Remove="PaymentDetailApi.IntegrationTests\**" />
     <EmbeddedResource Remove="PaymentDetailApi.IntegrationTests\**" />
+    <Compile Remove="PaymentDetailApi.Gateway\**" />
+    <Content Remove="PaymentDetailApi.Gateway\**" />
+    <None Remove="PaymentDetailApi.Gateway\**" />
+    <EmbeddedResource Remove="PaymentDetailApi.Gateway\**" />
   </ItemGroup>
 
   <ItemGroup>
