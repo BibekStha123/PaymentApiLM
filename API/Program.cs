@@ -2,7 +2,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PaymentDetailApi.Application.Common.Behaviors;
@@ -19,7 +18,6 @@ using PaymentDetailApi.Infrastructure.EventHandlers.Payments;
 using PaymentDetailApi.Infrastructure.EventHandlers.Products;
 using PaymentDetailApi.Infrastructure.Persistence;
 using System.Text;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -32,27 +30,6 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-//rate limiter
-builder.Services.AddRateLimiter(rateLimiterOptions =>
-{
-    rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
-    rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
-    {
-        options.Window = TimeSpan.FromSeconds(10);
-        options.QueueLimit = 0;//reject
-        options.PermitLimit = 2;//2 req in specified window(10)
-        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-    });
-
-    rateLimiterOptions.AddSlidingWindowLimiter("sliding", options =>
-    {
-        options.Window = TimeSpan.FromSeconds(30);
-        options.PermitLimit = 10;
-        options.SegmentsPerWindow = 3;
-    });
-});
 
 builder.Services.AddHttpClient("LMStudio", client =>
 {
@@ -183,15 +160,10 @@ app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
     }
 }));
 
-app.UseCors(options =>
-options.WithOrigins("http://localhost:4200")
-.AllowAnyHeader().AllowAnyMethod());
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseRateLimiter();
 app.MapControllers();
 app.Run();
 

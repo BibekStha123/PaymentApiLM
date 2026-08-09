@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.PaymentDetail.Commands;
 using PaymentDetailApi.Application.PaymentDetail.Queries;
@@ -11,7 +10,6 @@ using System.Security.Claims;
 namespace PaymentDetailApi.API.Controllers.PaymentDetails
 {
     [Authorize]
-    [EnableRateLimiting("sliding")]
     [Route("api/v1/payment-details")]
     [ApiController]
     public class PaymentDetailsController : ControllerBase
