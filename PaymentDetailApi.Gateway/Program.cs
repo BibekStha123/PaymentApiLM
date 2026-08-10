@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,10 +52,55 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
+{
+    var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+    var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
+        .CreateLogger("GatewayExceptionHandler");
+
+    logger.LogError(error, "Unhandled exception in gateway while processing {Method} {Path}",
+        context.Request.Method, context.Request.Path);
+
+    context.Response.ContentType = "application/json";
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+    await context.Response.WriteAsJsonAsync(new
+    {
+        title = "Gateway Error",
+        status = StatusCodes.Status500InternalServerError,
+        detail = "An unexpected error occurred while processing the request."
+    });
+}));
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
+
+app.Use(async (context, next) =>
+{
+    await next();
+
+    if (!context.Response.HasStarted &&
+        context.Response.StatusCode is StatusCodes.Status502BadGateway
+            or StatusCodes.Status503ServiceUnavailable
+            or StatusCodes.Status504GatewayTimeout)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
+            .CreateLogger("GatewayProxyErrorHandler");
+
+        logger.LogError("Upstream service failure: {StatusCode} for {Method} {Path}",
+            context.Response.StatusCode, context.Request.Method, context.Request.Path);
+
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            title = "Service Unavailable",
+            status = context.Response.StatusCode,
+            detail = "The upstream service is currently unavailable. Please try again later."
+        });
+    }
+});
 
 app.MapReverseProxy();
 
