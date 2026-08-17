@@ -15,7 +15,10 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
         }
         public async Task<CursorPagedResponse<PaymentDetailResponse>> Handle(GetAllPaymentDetailsQuery request, CancellationToken cancellationToken)
         {
-            var items = await _context.PaymentDetails
+            // Materialize the whole CardNumber/ExpirationDate value objects first - EF Core can
+            // translate selecting a converted property as a whole, but not member access (.Value)
+            // on it within the query itself, so the .Value projection has to happen in memory after.
+            var rows = await _context.PaymentDetails
                 .Where(p => p.Active)
                 .Where(p => request.cursor == null || p.Id.CompareTo(request.cursor.Value) > 0)
                 .OrderBy(p => p.Id)
@@ -23,8 +26,12 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
                 .Join(_context.Users,
                     p => p.UserId,
                     u => u.Id,
-                    (p, u) => new PaymentDetailResponse(p.Id, u.UserName, p.CardNumber, p.ExpirationDate, p.SecurityCode, p.Active))
+                    (p, u) => new { p.Id, u.UserName, p.CardNumber, p.ExpirationDate, p.SecurityCode, p.Active })
                 .ToListAsync(cancellationToken);
+
+            var items = rows
+                .Select(r => new PaymentDetailResponse(r.Id, r.UserName, r.CardNumber.Value, r.ExpirationDate.Value, r.SecurityCode, r.Active))
+                .ToList();
 
             Guid? nextCursor = null;
             if(items.Count > request.limit)

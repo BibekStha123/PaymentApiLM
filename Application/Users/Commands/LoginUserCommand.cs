@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.Common.Interfaces;
 using PaymentDetailApi.Application.User;
+using PaymentDetailApi.Domain.User.ValueObjects;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Users.Commands
@@ -22,16 +23,18 @@ namespace PaymentDetailApi.Application.Users.Commands
 
         public async Task<UserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
+            var email = Email.Create(request.Email);
+
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email.ToLowerInvariant(), cancellationToken)
+                .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
                 ?? throw new UnauthorizedAccessException("Invalid email or password.");
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Invalid email or password.");
 
-            var token = _jwtTokenService.GenerateToken(user.Id, user.UserName, user.Email, user.Role);
+            var token = _jwtTokenService.GenerateToken(user.Id, user.UserName, user.Email.Value, user.Role);
 
-            return new UserResponse(user.Email, user.DisplayName, token);
+            return new UserResponse(user.Email.Value, user.DisplayName, token);
         }
     }
 }

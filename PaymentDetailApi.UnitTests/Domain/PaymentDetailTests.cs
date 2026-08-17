@@ -1,16 +1,20 @@
 using Xunit;
 using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Domain.Payment.ValueObjects;
 
 namespace PaymentDetailApi.UnitTests.Domain;
 
 public class PaymentDetailTests
 {
     private static readonly Guid ValidUserId      = Guid.NewGuid();
-    private const string ValidCardNumber    = "1234567890123456";
-    private const string ValidExpiration    = "12/25";
-    private const string ValidSecurityCode3 = "123";
-    private const string ValidSecurityCode4 = "1234";
+    private const string ValidCardNumberValue     = "1234567890123456";
+    private const string ValidExpirationValue     = "12/30";
+    private const string ValidSecurityCode3       = "123";
+    private const string ValidSecurityCode4       = "1234";
+
+    private static CardNumber ValidCardNumber => CardNumber.Create(ValidCardNumberValue);
+    private static ExpirationDate ValidExpiration => ExpirationDate.Create(ValidExpirationValue);
 
     private static PaymentDetail CreateValid() =>
         new(ValidUserId, ValidCardNumber, ValidExpiration, ValidSecurityCode3);
@@ -23,8 +27,8 @@ public class PaymentDetailTests
         var payment = new PaymentDetail(ValidUserId, ValidCardNumber, ValidExpiration, ValidSecurityCode3);
 
         Assert.Equal(ValidUserId, payment.UserId);
-        Assert.Equal(ValidCardNumber, payment.CardNumber);
-        Assert.Equal(ValidExpiration, payment.ExpirationDate);
+        Assert.Equal(ValidCardNumberValue, payment.CardNumber.Value);
+        Assert.Equal(ValidExpirationValue, payment.ExpirationDate.Value);
         Assert.Equal(ValidSecurityCode3, payment.SecurityCode);
         Assert.True(payment.Active);
     }
@@ -48,13 +52,13 @@ public class PaymentDetailTests
     }
 
     [Theory]
-    [InlineData("01/25")]
+    [InlineData("01/30")]
     [InlineData("12/99")]
-    [InlineData("06/30")]
+    [InlineData("06/35")]
     public void Constructor_ValidExpirationDate_Succeeds(string date)
     {
-        var payment = new PaymentDetail(ValidUserId, ValidCardNumber, date, ValidSecurityCode3);
-        Assert.Equal(date, payment.ExpirationDate);
+        var payment = new PaymentDetail(ValidUserId, ValidCardNumber, ExpirationDate.Create(date), ValidSecurityCode3);
+        Assert.Equal(date, payment.ExpirationDate.Value);
     }
 
     // ── Constructor: UserId validation ───────────────────────────────────────
@@ -68,22 +72,42 @@ public class PaymentDetailTests
         Assert.Contains("UserId is required", ex.Message);
     }
 
-    // ── Constructor: CardNumber validation ───────────────────────────────────
+    // ── Constructor: already-expired card is rejected ────────────────────────
+
+    [Fact]
+    public void Constructor_AlreadyExpiredDate_Throws()
+    {
+        var expired = ExpirationDate.Create("01/20"); // January 2020 - long past
+
+        var ex = Assert.Throws<ArgumentException>(() =>
+            new PaymentDetail(ValidUserId, ValidCardNumber, expired, ValidSecurityCode3));
+
+        Assert.Contains("already expired", ex.Message);
+    }
+
+    // ── CardNumber.Create: format validation ─────────────────────────────────
 
     [Theory]
     [InlineData("123456789012345")]    // 15 digits
     [InlineData("12345678901234567")]  // 17 digits
     [InlineData("123456789012345A")]   // non-numeric
     [InlineData("")]
-    public void Constructor_InvalidCardNumber_Throws(string cardNumber)
+    public void CardNumber_InvalidFormat_Throws(string cardNumber)
     {
-        var ex = Assert.Throws<ArgumentException>(() =>
-            new PaymentDetail(ValidUserId, cardNumber, ValidExpiration, ValidSecurityCode3));
+        var ex = Assert.Throws<ArgumentException>(() => CardNumber.Create(cardNumber));
 
         Assert.Contains("Card number must be exactly 16 digits", ex.Message);
     }
 
-    // ── Constructor: ExpirationDate validation ───────────────────────────────
+    [Fact]
+    public void CardNumber_Masked_ShowsOnlyLastFourDigits()
+    {
+        var cardNumber = CardNumber.Create(ValidCardNumberValue);
+
+        Assert.Equal("**** **** **** 3456", cardNumber.Masked());
+    }
+
+    // ── ExpirationDate.Create: format validation ─────────────────────────────
 
     [Theory]
     [InlineData("13/25")]    // month out of range
@@ -91,10 +115,9 @@ public class PaymentDetailTests
     [InlineData("1225")]     // missing slash
     [InlineData("12/2025")]  // 4-digit year
     [InlineData("")]
-    public void Constructor_InvalidExpirationDate_Throws(string date)
+    public void ExpirationDate_InvalidFormat_Throws(string date)
     {
-        var ex = Assert.Throws<ArgumentException>(() =>
-            new PaymentDetail(ValidUserId, ValidCardNumber, date, ValidSecurityCode3));
+        var ex = Assert.Throws<ArgumentException>(() => ExpirationDate.Create(date));
 
         Assert.Contains("Expiration date must be in MM/YY format", ex.Message);
     }

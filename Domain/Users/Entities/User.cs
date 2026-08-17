@@ -1,28 +1,29 @@
 ﻿using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.User.ValueObjects;
 using PaymentDetailApi.Domain.Users.Events;
 
 namespace PaymentDetailApi.Domain.User.Entities
 {
     public class User : AggregateRoot
     {
-        public string UserName { get; private set; }
-        public string Email { get; private set; }
-        public string PasswordHash { get; private set; }
-        public string Role { get; private set; }
-        public string DisplayName { get; private set; }
+        public string UserName { get; private set; } = null!;
+        public Email Email { get; private set; } = null!;
+        public string PasswordHash { get; private set; } = null!;
+        public string Role { get; private set; } = null!;
+        public string DisplayName { get; private set; } = null!;
         public bool IsActive { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        private User() { }
+        private User() { } // for EF Core materialization
 
-        public static User Register(string userName, string email, string passwordHash, string? displayName = null)
+        public static User Register(string userName, Email email, string passwordHash, string? displayName = null)
         {
-            Validate(userName, email, passwordHash);
+            Validate(userName, passwordHash);
 
             var user = new User
             {
                 UserName = userName,
-                Email = email.ToLowerInvariant(),
+                Email = email,
                 PasswordHash = passwordHash,
                 Role = "User",
                 DisplayName = displayName ?? string.Empty,
@@ -35,13 +36,10 @@ namespace PaymentDetailApi.Domain.User.Entities
             return user;
         }
 
-        private static void Validate(string userName, string email, string passwordHash)
+        private static void Validate(string userName, string passwordHash)
         {
             if (string.IsNullOrWhiteSpace(userName))
                 throw new ArgumentException("Username is required.");
-
-            if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
-                throw new ArgumentException("A valid email is required.");
 
             if (string.IsNullOrWhiteSpace(passwordHash))
                 throw new ArgumentException("Password is required.");

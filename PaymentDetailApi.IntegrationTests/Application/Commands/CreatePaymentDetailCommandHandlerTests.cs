@@ -9,7 +9,7 @@ public class CreatePaymentDetailCommandHandlerTests : IDisposable
 {
     private static readonly Guid ValidUserId      = Guid.NewGuid();
     private const string ValidCardNumber   = "1234567890123456";
-    private const string ValidExpiration   = "12/25";
+    private const string ValidExpiration   = "12/30";
     private const string ValidSecurityCode = "123";
 
     private readonly PaymentDetailsContext _context;
@@ -49,8 +49,8 @@ public class CreatePaymentDetailCommandHandlerTests : IDisposable
 
         Assert.NotNull(saved);
         Assert.Equal(ValidUserId, saved.UserId);
-        Assert.Equal(ValidCardNumber, saved.CardNumber);
-        Assert.Equal(ValidExpiration, saved.ExpirationDate);
+        Assert.Equal(ValidCardNumber, saved.CardNumber.Value);
+        Assert.Equal(ValidExpiration, saved.ExpirationDate.Value);
         Assert.Equal(ValidSecurityCode, saved.SecurityCode);
         Assert.True(saved.Active);
     }
@@ -61,8 +61,8 @@ public class CreatePaymentDetailCommandHandlerTests : IDisposable
         var firstUserId  = Guid.NewGuid();
         var secondUserId = Guid.NewGuid();
 
-        var firstCommand  = new CreatePaymentDetailCommand(firstUserId,  "1111111111111111", "01/26", "111");
-        var secondCommand = new CreatePaymentDetailCommand(secondUserId, "2222222222222222", "02/27", "222");
+        var firstCommand  = new CreatePaymentDetailCommand(firstUserId,  "1111111111111111", "01/31", "111");
+        var secondCommand = new CreatePaymentDetailCommand(secondUserId, "2222222222222222", "02/32", "222");
 
         var firstId  = await _handler.Handle(firstCommand,  CancellationToken.None);
         var secondId = await _handler.Handle(secondCommand, CancellationToken.None);

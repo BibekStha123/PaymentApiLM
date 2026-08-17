@@ -1,20 +1,21 @@
 ﻿using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Domain.Payment.ValueObjects;
 
 namespace PaymentDetailApi.Domain.Payment.Entities
 {
     public class PaymentDetail : AggregateRoot
     {
         public Guid UserId { get; private set; }
-        public string CardNumber { get; private set; }
-        public string ExpirationDate { get; private set; }
-        public string SecurityCode { get; private set; }
+        public CardNumber CardNumber { get; private set; } = null!;
+        public ExpirationDate ExpirationDate { get; private set; } = null!;
+        public string SecurityCode { get; private set; } = null!;
         public bool Active { get; private set; }
         private PaymentDetail() { } // for EF Core materialization
 
-        public PaymentDetail(Guid userId, string cardNumber, string expirationDate, string securityCode)
+        public PaymentDetail(Guid userId, CardNumber cardNumber, ExpirationDate expirationDate, string securityCode)
         {
-            Validate(userId, cardNumber, expirationDate, securityCode);
+            Validate(userId, expirationDate, securityCode);
 
             UserId = userId;
             CardNumber = cardNumber;
@@ -31,16 +32,12 @@ namespace PaymentDetailApi.Domain.Payment.Entities
             AddDomainEvent(new PaymentDeletedDomainEvent(this));
         }
 
-        private static void Validate(Guid userId, string cardNumber, string expirationDate, string securityCode)
+        private static void Validate(Guid userId, ExpirationDate expirationDate, string securityCode)
         {
             if (userId == Guid.Empty)
                 throw new ArgumentException("UserId is required.", nameof(userId));
-
-            if (string.IsNullOrWhiteSpace(cardNumber) || !System.Text.RegularExpressions.Regex.IsMatch(cardNumber, @"^\d{16}$"))
-                throw new ArgumentException("Card number must be exactly 16 digits.", nameof(cardNumber));
-
-            if (string.IsNullOrWhiteSpace(expirationDate) || !System.Text.RegularExpressions.Regex.IsMatch(expirationDate, @"^(0[1-9]|1[0-2])\/\d{2}$"))
-                throw new ArgumentException("Expiration date must be in MM/YY format.", nameof(expirationDate));
+            if (expirationDate.IsExpired)
+                throw new ArgumentException("Card has already expired.", nameof(expirationDate));
 
             if (string.IsNullOrWhiteSpace(securityCode) || !System.Text.RegularExpressions.Regex.IsMatch(securityCode, @"^\d{3,4}$"))
                 throw new ArgumentException("Security code must be 3 or 4 digits.", nameof(securityCode));

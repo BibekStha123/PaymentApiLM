@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PaymentDetailApi.Domain.Catalog.Entities;
+using PaymentDetailApi.Domain.Shared.ValueObjects;
 
 namespace PaymentDetailApi.Infrastructure.Persistence.Configuration
 {
@@ -21,6 +22,7 @@ namespace PaymentDetailApi.Infrastructure.Persistence.Configuration
                 .HasMaxLength(1000);
 
             builder.Property(p => p.Price)
+                .HasConversion(money => money.Amount, value => Money.Create(value))
                 .HasPrecision(18, 2);
 
             builder.Property(p => p.Stock)

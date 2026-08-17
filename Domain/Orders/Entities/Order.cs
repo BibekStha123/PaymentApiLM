@@ -1,5 +1,6 @@
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Orders.Events;
+using PaymentDetailApi.Domain.Shared.ValueObjects;
 
 namespace PaymentDetailApi.Domain.Orders.Entities
 {
@@ -10,10 +11,10 @@ namespace PaymentDetailApi.Domain.Orders.Entities
         public Guid UserId { get; private set; }
         public OrderStatus Status { get; private set; }
         public DateTime OrderDate { get; private set; }
-        public string ShippingAddress { get; private set; }
+        public string ShippingAddress { get; private set; } = null!;
         public Guid CurrencyId { get; private set; }
         public IReadOnlyCollection<OrderItem> OrderItems => _orderItems.AsReadOnly();
-        public decimal TotalAmount => _orderItems.Sum(i => i.TotalPrice);
+        public Money TotalAmount => _orderItems.Aggregate(Money.Zero, (sum, item) => sum.Add(item.TotalPrice));
 
         private Order() { }
 
@@ -34,7 +35,7 @@ namespace PaymentDetailApi.Domain.Orders.Entities
             return new Order(userId, shippingAddress, currencyId);
         }
 
-        public void AddItem(Guid productId, decimal unitPrice, int quantity)
+        public void AddItem(Guid productId, Money unitPrice, int quantity)
         {
             var item = OrderItem.Create(Id, productId, unitPrice, quantity);
             _orderItems.Add(item);

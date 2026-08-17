@@ -1,5 +1,6 @@
 using MediatR;
 using PaymentDetailApi.Application.Common;
+using PaymentDetailApi.Domain.Payment.ValueObjects;
 using PaymentDetailApi.Infrastructure.Persistence;
 using DomainPaymentDetail = PaymentDetailApi.Domain.Payment.Entities.PaymentDetail;
 
@@ -24,8 +25,8 @@ namespace PaymentDetailApi.Application.PaymentDetail.Commands
         {
             var payment = new DomainPaymentDetail(
                 request.UserId,
-                request.CardNumber,
-                request.ExpirationDate,
+                CardNumber.Create(request.CardNumber),
+                ExpirationDate.Create(request.ExpirationDate),
                 request.SecurityCode);
 
             _context.PaymentDetails.Add(payment);

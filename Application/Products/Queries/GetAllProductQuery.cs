@@ -16,15 +16,21 @@ namespace PaymentDetailApi.Application.Products.Queries
         }
         public async Task<CursorPagedResponse<ProductResponse>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
-            var items = await _context.Products
+            // Select the whole converted Price property first (EF can translate that), then read
+            // .Amount off it in memory - .Amount access can't be translated directly in the query.
+            var rows = await _context.Products
                 .Where(p => request.Cursor == null || p.Id.CompareTo(request.Cursor.Value) > 0)
                 .OrderBy(p => p.Id)
                 .Take(request.Limit + 1)
                 .Join(_context.Categories,
                       p => p.CategoryId,
                       c => c.Id,
-                      (p, c) => new ProductResponse(p.Id, p.Name, p.Description, p.Price, p.Stock, c.Name))
+                      (p, c) => new { p.Id, p.Name, p.Description, p.Price, p.Stock, CategoryName = c.Name })
                 .ToListAsync(cancellationToken);
+
+            var items = rows
+                .Select(r => new ProductResponse(r.Id, r.Name, r.Description, r.Price.Amount, r.Stock, r.CategoryName))
+                .ToList();
 
             Guid? nextCursor = null;
             if (items.Count > request.Limit)

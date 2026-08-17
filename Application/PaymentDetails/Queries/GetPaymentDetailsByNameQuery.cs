@@ -16,17 +16,19 @@ namespace PaymentDetailApi.Application.PaymentDetail.Queries
 
         public async Task<List<PaymentDetailResponse>> Handle(GetPaymentDetailsByNameQuery request, CancellationToken cancellationToken)
         {
-            var result = await _context.PaymentDetails
+            var rows = await _context.PaymentDetails
                 .Where(p => p.Active)
                 .Join(_context.Users,
                     p => p.UserId,
                     u => u.Id,
                     (p, u) => new { p, u })
                 .Where(x => x.u.UserName == request.name)
-                .Select(x => new PaymentDetailResponse(x.p.Id, x.u.UserName, x.p.CardNumber, x.p.ExpirationDate, x.p.SecurityCode, x.p.Active))
+                .Select(x => new { x.p.Id, x.u.UserName, x.p.CardNumber, x.p.ExpirationDate, x.p.SecurityCode, x.p.Active })
                 .ToListAsync(cancellationToken);
 
-            return result;
+            return rows
+                .Select(r => new PaymentDetailResponse(r.Id, r.UserName, r.CardNumber.Value, r.ExpirationDate.Value, r.SecurityCode, r.Active))
+                .ToList();
         }
     }
 }

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PaymentDetailApi.Application.Common;
+using PaymentDetailApi.Domain.User.ValueObjects;
 using PaymentDetailApi.Infrastructure.Persistence;
 using DomainUser = PaymentDetailApi.Domain.User.Entities.User;
 
@@ -24,13 +25,15 @@ namespace PaymentDetailApi.Application.Users.Commands
 
         public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            await ValidateUniqueness(request, cancellationToken);
+            var email = Email.Create(request.Email);
+
+            await ValidateUniqueness(request, email, cancellationToken);
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-            
+
             var user = DomainUser.Register(
                 request.UserName,
-                request.Email,
+                email,
                 passwordHash,
                 request.DisplayName);
 
@@ -39,10 +42,10 @@ namespace PaymentDetailApi.Application.Users.Commands
 
             return user.Id;
         }
-        private async Task ValidateUniqueness(RegisterUserCommand request, CancellationToken cancellationToken)
+        private async Task ValidateUniqueness(RegisterUserCommand request, Email email, CancellationToken cancellationToken)
         {
             var emailTaken = await _context.Users
-                .AnyAsync(u => u.Email == request.Email.ToLowerInvariant(), cancellationToken);
+                .AnyAsync(u => u.Email == email, cancellationToken);
             if (emailTaken)
                 throw new InvalidOperationException("Email is already registered.");
 

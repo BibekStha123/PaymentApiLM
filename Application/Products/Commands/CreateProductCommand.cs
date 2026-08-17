@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Domain.Catalog.Entities;
+using PaymentDetailApi.Domain.Shared.ValueObjects;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Products.Commands
@@ -27,7 +28,7 @@ namespace PaymentDetailApi.Application.Products.Commands
             Product product = Product.Create(
                 request.Name,
                 request.Description,
-                request.Price,
+                Money.Create(request.Price),
                 request.Stock,
                 request.CategoryId,
                 request.IsActive

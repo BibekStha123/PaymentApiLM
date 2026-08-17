@@ -1,21 +1,22 @@
 ﻿using PaymentDetailApi.Domain.Catalog.Events;
 using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.Shared.ValueObjects;
 
 namespace PaymentDetailApi.Domain.Catalog.Entities
 {
     public class Product : AggregateRoot
     {
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public decimal Price { get; private set; }
+        public string Name { get; private set; } = null!;
+        public string Description { get; private set; } = null!;
+        public Money Price { get; private set; } = null!;
         public int Stock { get; private set; }
         public Guid CategoryId { get; private set; }
         public bool IsActive { get; private set; }
 
         private Product() { } // for EF Core materialization
-        private Product(string name, string description, decimal price, int stock, Guid categoryId, bool isActive)
+        private Product(string name, string description, Money price, int stock, Guid categoryId, bool isActive)
         {
-            Validate(name, description, price, stock, categoryId);
+            Validate(name, description, stock, categoryId);
             Name = name;
             Description = description;
             Price = price;
@@ -23,7 +24,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             CategoryId = categoryId;
             IsActive = isActive;
         }
-        public static Product Create(string name, string description, decimal price, int stock, Guid categoryId, bool isActive)
+        public static Product Create(string name, string description, Money price, int stock, Guid categoryId, bool isActive)
         {
             return new Product(name, description, price, stock, categoryId, isActive);
         }
@@ -51,7 +52,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             AddDomainEvent(new ProductStockRemovedDomainEvent(this, quantity));
         }
 
-        private static void Validate(string name, string description, decimal price, int stock, Guid categoryId)
+        private static void Validate(string name, string description, int stock, Guid categoryId)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Product name is required.", nameof(name));
@@ -62,8 +63,7 @@ namespace PaymentDetailApi.Domain.Catalog.Entities
             if (string.IsNullOrWhiteSpace(description))
                 throw new ArgumentException("Product description is required.", nameof(description));
 
-            if (price <= 0)
-                throw new ArgumentException("Product price must be greater than zero.", nameof(price));
+            // Price > 0 is already guaranteed by Money.Create().
 
             if (stock < 0)
                 throw new ArgumentException("Product stock cannot be negative.", nameof(stock));

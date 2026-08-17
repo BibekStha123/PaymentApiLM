@@ -1,4 +1,5 @@
 using PaymentDetailApi.Domain.Common;
+using PaymentDetailApi.Domain.Shared.ValueObjects;
 
 namespace PaymentDetailApi.Domain.Orders.Entities
 {
@@ -6,31 +7,30 @@ namespace PaymentDetailApi.Domain.Orders.Entities
     {
         public Guid OrderId { get; private set; }
         public Guid ProductId { get; private set; }
-        public decimal UnitPrice { get; private set; }
+        public Money UnitPrice { get; private set; } = null!;
         public int Quantity { get; private set; }
-        public decimal TotalPrice => UnitPrice * Quantity;
+        public Money TotalPrice => UnitPrice.Multiply(Quantity);
 
         private OrderItem() { }
 
-        private OrderItem(Guid orderId, Guid productId, decimal unitPrice, int quantity)
+        private OrderItem(Guid orderId, Guid productId, Money unitPrice, int quantity)
         {
-            Validate(productId, unitPrice, quantity);
+            Validate(productId, quantity);
             OrderId = orderId;
             ProductId = productId;
             UnitPrice = unitPrice;
             Quantity = quantity;
         }
 
-        internal static OrderItem Create(Guid orderId, Guid productId, decimal unitPrice, int quantity)
+        internal static OrderItem Create(Guid orderId, Guid productId, Money unitPrice, int quantity)
             => new(orderId, productId, unitPrice, quantity);
 
-        private static void Validate(Guid productId, decimal unitPrice, int quantity)
+        private static void Validate(Guid productId, int quantity)
         {
             if (productId == Guid.Empty)
                 throw new ArgumentException("A valid product is required.", nameof(productId));
 
-            if (unitPrice <= 0)
-                throw new ArgumentException("Unit price must be greater than zero.", nameof(unitPrice));
+            // UnitPrice > 0 is already guaranteed by Money.Create().
 
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));

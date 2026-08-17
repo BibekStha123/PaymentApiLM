@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PaymentDetailApi.Application.Common;
+using PaymentDetailApi.Domain.Shared.ValueObjects;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Orders.Queries
@@ -18,22 +19,42 @@ namespace PaymentDetailApi.Application.Orders.Queries
 
         public async Task<CursorPagedResponse<OrderResponse>> Handle(GetAllOrderQuery request, CancellationToken cancellationToken)
         {
-            var items = await _context.Orders
+            var rows = await _context.Orders
                 .Where(o => request.Cursor == null || o.Id.CompareTo(request.Cursor.Value) > 0)
                 .OrderBy(o => o.Id)
                 .Take(request.Limit + 1)
-                .Select(o => new OrderResponse(
+                .Select(o => new
+                {
                     o.Id,
                     o.UserId,
-                    _context.Users.Where(u => u.Id == o.UserId).Select(u => u.UserName).FirstOrDefault()!,
+                    UserName = _context.Users.Where(u => u.Id == o.UserId).Select(u => u.UserName).FirstOrDefault()!,
                     o.ShippingAddress,
-                    _context.Currency.Where(c => c.Id == o.CurrencyId).Select(c => c.CurrencyCode).FirstOrDefault()!,
+                    CurrencyCode = _context.Currency.Where(c => c.Id == o.CurrencyId).Select(c => c.CurrencyCode).FirstOrDefault()!,
                     o.Status,
                     o.OrderDate,
-                    o.OrderItems.Sum(i => i.UnitPrice * i.Quantity),
-                    o.OrderItems.Select(i => new OrderItemResponse(i.ProductId, i.UnitPrice, i.Quantity, i.UnitPrice * i.Quantity)).ToList()
-                ))
+                    Items = o.OrderItems.Select(i => new { i.ProductId, i.UnitPrice, i.Quantity }).ToList()
+                })
                 .ToListAsync(cancellationToken);
+
+            var items = rows.Select(o =>
+            {
+                var orderItems = o.Items
+                    .Select(i => new OrderItemResponse(i.ProductId, i.UnitPrice.Amount, i.Quantity, i.UnitPrice.Multiply(i.Quantity).Amount))
+                    .ToList();
+
+                var totalAmount = o.Items.Aggregate(Money.Zero, (sum, i) => sum.Add(i.UnitPrice.Multiply(i.Quantity)));
+
+                return new OrderResponse(
+                    o.Id,
+                    o.UserId,
+                    o.UserName,
+                    o.ShippingAddress,
+                    o.CurrencyCode,
+                    o.Status,
+                    o.OrderDate,
+                    totalAmount.Amount,
+                    orderItems);
+            }).ToList();
 
             Guid? nextCursor = null;
             if (items.Count > request.Limit)
