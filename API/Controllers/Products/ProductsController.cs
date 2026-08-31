@@ -29,6 +29,7 @@ namespace PaymentDetailApi.API.Controllers.Products
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<Guid>> Post([FromBody] ProductRequest request)
         {
             var command = new CreateProductCommand(
@@ -47,6 +48,7 @@ namespace PaymentDetailApi.API.Controllers.Products
 
         // PUT api/<ProductsController>/5
         [HttpPatch("{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<int>> Patch(Guid id, [FromBody] AddStockRequest request)
         {
             var command = new AddStockCommand(id, request.stock);
@@ -58,6 +60,7 @@ namespace PaymentDetailApi.API.Controllers.Products
 
         // DELETE api/<ProductsController>/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public void Delete(Guid id)
         {
         }

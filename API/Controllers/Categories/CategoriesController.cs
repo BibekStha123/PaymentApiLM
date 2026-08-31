@@ -6,7 +6,7 @@ using PaymentDetailApi.Application.Common;
 
 namespace PaymentDetailApi.API.Controllers.Categories
 {
-    [Authorize]
+    [Authorize(Policy = "AdminOnly")]
     [Route("api/v1/categories")]
     [ApiController]
     public class CategoriesController : ControllerBase
