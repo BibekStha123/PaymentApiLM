@@ -38,6 +38,7 @@ namespace PaymentDetailApi.API.Controllers.Orders
             return Ok(await _mediator.Send(command));
         }
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<CursorPagedResponse<OrderResponse>>> Get([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
         {
             var result = await _mediator.Send(new GetAllOrderQuery(cursor, limit));

@@ -5,7 +5,6 @@ using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Application.Products;
 using PaymentDetailApi.Application.Products.Commands;
 using PaymentDetailApi.Application.Products.Queries;
-using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

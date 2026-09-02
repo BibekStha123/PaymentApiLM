@@ -138,6 +138,7 @@ namespace PaymentDetailApi.API.Controllers.PaymentDetails
 
         // GET: api/PaymentDetail
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<CursorPagedResponse<PaymentDetailResponse>>> GetPaymentDetails([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
         {
             var result = await _mediator.Send(new GetAllPaymentDetailsQuery(cursor, limit));
