@@ -31,7 +31,7 @@ Roadmap for hardening PaymentDetailApi into a more realistic, production-style p
 ## Authorization / Auth
 
 - [ ] **Refresh tokens** — login only issues a short-lived access token (`IJwtTokenService.GenerateToken`). Add issue + rotate + revoke so clients aren't forced to re-login on expiry.
-- [ ] **"My orders" endpoint** — `OrdersController.Get` is Admin-only (it's the list-all). Regular users have no way to list their own order history. Add a self-scoped `GET /orders/mine` (or filter param) using the same `ClaimTypes.NameIdentifier` pattern as `GetMyCards`.
+- [x] **"My orders" endpoint** — fixed 2026-09-08. Added `GET /orders/my-orders` (`GetOrdersByUserIdQuery`/`GetOrdersByUserIdQueryHandler`), same cursor-pagination shape as the Admin-only list, scoped via `ClaimTypes.NameIdentifier` like `GetMyCards`. No `AdminOnly` restriction — any authenticated user gets their own orders only.
 - [ ] **Login throttling / lockout** — currently nothing in the API stops repeated failed login attempts beyond the Gateway's general rate limiter (which isn't login-specific). Consider a per-account or per-IP failed-attempt lockout for `LoginUserCommand`.
 
 ### Orders

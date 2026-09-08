@@ -44,5 +44,26 @@ namespace PaymentDetailApi.API.Controllers.Orders
             var result = await _mediator.Send(new GetAllOrderQuery(cursor, limit));
             return Ok(result);
         }
+        [HttpGet("my-orders")]
+        public async Task<ActionResult<CursorPagedResponse<OrderResponse>>> GetMine([FromQuery] Guid? cursor, [FromQuery] int limit = 10)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            var result = await _mediator.Send(new GetOrdersByUserIdQuery(userId, cursor, limit));
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OrderResponse>> GetById(Guid id)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            var result = await _mediator.Send(new GetOrderByIdQuery(id, userId, User.IsInRole("Admin")));
+            return Ok(result);
+        }
     }
 }
