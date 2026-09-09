@@ -28,11 +28,14 @@ namespace PaymentDetailApi.API.Controllers.Orders
             if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
                 return Unauthorized();
 
+            string? idempotencyKey = Request.Headers["Idempotency-Key"];
+
             var command = new CreateOrderCommand(
                 userId,
                 request.ShippingAddress,
                 request.CurrencyId,
-                request.Items.Select(i => new CreateOrderItemCommand(i.ProductId, i.Quantity)).ToList()
+                request.Items.Select(i => new CreateOrderItemCommand(i.ProductId, i.Quantity)).ToList(),
+                idempotencyKey
             );
 
             return Ok(await _mediator.Send(command));

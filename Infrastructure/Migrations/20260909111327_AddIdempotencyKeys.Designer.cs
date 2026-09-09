@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace PaymentDetailApi.Migrations
+namespace PaymentDetailApi.Infrastructure.Migrations
 {
     [DbContext(typeof(PaymentDetailsContext))]
-    partial class PaymentDetailsContextModelSnapshot : ModelSnapshot
+    [Migration("20260909111327_AddIdempotencyKeys")]
+    partial class AddIdempotencyKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
