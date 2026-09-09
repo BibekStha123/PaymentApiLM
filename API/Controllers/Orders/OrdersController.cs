@@ -65,5 +65,16 @@ namespace PaymentDetailApi.API.Controllers.Orders
             var result = await _mediator.Send(new GetOrderByIdQuery(id, userId, User.IsInRole("Admin")));
             return Ok(result);
         }
+
+        [HttpPatch("{id}/cancel")]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            await _mediator.Send(new CancelOrderCommand(id, userId, User.IsInRole("Admin")));
+            return NoContent();
+        }
     }
 }

@@ -35,8 +35,8 @@ Roadmap for hardening PaymentDetailApi into a more realistic, production-style p
 - [ ] **Login throttling / lockout** — currently nothing in the API stops repeated failed login attempts beyond the Gateway's general rate limiter (which isn't login-specific). Consider a per-account or per-IP failed-attempt lockout for `LoginUserCommand`.
 
 ### Orders
-- [ ] `GET /orders/{id}` — only list (`GET /orders`, cursor-paged, Admin-only) and `POST /orders` exist today.
-- [ ] Expose `Order.Cancel()` — the domain method exists on the entity but no command/endpoint calls it.
+- [x] `GET /orders/{id}` — fixed 2026-09-08. `GetOrderByIdQuery`/`GetOrderByIdQueryHandler` was a `throw new NotImplementedException()` stub; implemented it plus an ownership check (`RequestingUserId`/`IsAdmin` on the query — not found → 404 `KeyNotFoundException`, found but not yours and not Admin → 401 `UnauthorizedAccessException`, matching the existing exception-middleware mapping). Verified at runtime with two users: owner gets 200, non-owner gets 401, nonexistent id gets 404.
+- [x] Expose `Order.Cancel()` — fixed 2026-09-09. `CancelOrderCommand`/`CancelOrderCommandHandler` (`Application/Orders/Commands/CancelOrderCommand.cs`), same ownership-or-admin check as `GetOrderByIdQueryHandler` (404 `KeyNotFoundException` if not found, 401 `UnauthorizedAccessException` if not owner/not admin). New `PATCH /orders/{id}/cancel` endpoint, 204 on success. `Order.Cancel()`'s existing `InvalidOperationException` (cancelling a delivered order) maps to 409 via the exception middleware, no extra handling needed. Verified at runtime: non-owner gets 401, nonexistent id gets 404, owner gets 204 and order status flips to `Cancelled`. Note: `Cancel()` has no guard against re-cancelling an already-cancelled order (only blocks from `Delivered`), so a second cancel silently no-ops — not fixed, flagged only.
 - [ ] **Idempotent order creation** — `POST /orders` has no idempotency key; a client retry (network blip) can create duplicate orders and double-decrement stock. Worth an `Idempotency-Key` header + a short-lived dedup table, common in payment-adjacent APIs.
 
 ### Testing
