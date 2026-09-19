@@ -62,10 +62,14 @@ namespace PaymentDetailApi.Application.Orders.Commands
 
             var order = Order.Create(request.UserId, request.ShippingAddress, request.CurrencyId);
 
+            await using var dbTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
             foreach (var item in request.Items)
             {
+                //pessimistic locking, lock the product from race condition
                 var product = await _dbContext.Products
-                    .FirstOrDefaultAsync(p => p.Id == item.ProductId, cancellationToken)
+                    .FromSqlInterpolated($"SELECT * FROM Products WITH (UPDLOCK, ROWLOCK) WHERE Id = {item.ProductId}")
+                    .FirstOrDefaultAsync(cancellationToken)
                     ?? throw new InvalidOperationException($"Product {item.ProductId} not found.");
 
                 product.RemoveStock(item.Quantity);
@@ -80,6 +84,7 @@ namespace PaymentDetailApi.Application.Orders.Commands
             claim?.AttachOrder(order.Id);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbTransaction.CommitAsync(cancellationToken);
 
             return order.Id;
         }
