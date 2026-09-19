@@ -16,6 +16,9 @@ namespace PaymentDetailApi.Application.Orders.Commands
             RuleFor(x => x.CurrencyId)
                 .NotEmpty();
 
+            RuleFor(x => x.PaymentDetailId)
+                .NotEmpty();
+
             RuleFor(x => x.Items)
                 .NotEmpty()
                 .WithMessage("An order must contain at least one item.");

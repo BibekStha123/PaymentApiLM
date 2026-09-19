@@ -34,6 +34,7 @@ namespace PaymentDetailApi.API.Controllers.Orders
                 userId,
                 request.ShippingAddress,
                 request.CurrencyId,
+                request.PaymentDetailId,
                 request.Items.Select(i => new CreateOrderItemCommand(i.ProductId, i.Quantity)).ToList(),
                 idempotencyKey
             );

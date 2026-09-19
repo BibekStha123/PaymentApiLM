@@ -5,6 +5,7 @@ using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Orders.Entities;
 using PaymentDetailApi.Domain.Payment.Entities;
 using PaymentDetailApi.Domain.Shared;
+using PaymentDetailApi.Domain.Transactions.Entities;
 using PaymentDetailApi.Domain.User.Entities;
 
 namespace PaymentDetailApi.Infrastructure.Persistence
@@ -24,6 +25,7 @@ namespace PaymentDetailApi.Infrastructure.Persistence
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<IdempotencyKey> IdempotencyKeys { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Domain.Orders.Entities;
 using PaymentDetailApi.Domain.Shared;
+using PaymentDetailApi.Domain.Transactions.Entities;
 using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Orders.Commands
@@ -11,6 +12,7 @@ namespace PaymentDetailApi.Application.Orders.Commands
         Guid UserId,
         string ShippingAddress,
         Guid CurrencyId,
+        Guid PaymentDetailId,
         List<CreateOrderItemCommand> Items,
         string? IdempotencyKey = null) : ICommand<Guid>;
 
@@ -54,6 +56,10 @@ namespace PaymentDetailApi.Application.Orders.Commands
                 }
             }
 
+            var paymentDetail = await _dbContext.PaymentDetails
+                .FirstOrDefaultAsync(p => p.Id == request.PaymentDetailId && p.UserId == request.UserId && p.Active, cancellationToken)
+                ?? throw new InvalidOperationException($"Payment detail {request.PaymentDetailId} not found.");
+
             var order = Order.Create(request.UserId, request.ShippingAddress, request.CurrencyId);
 
             foreach (var item in request.Items)
@@ -67,6 +73,9 @@ namespace PaymentDetailApi.Application.Orders.Commands
             }
 
             await _dbContext.Orders.AddAsync(order, cancellationToken);
+
+            var transaction = Transaction.Create(order.Id, paymentDetail.Id, order.TotalAmount, request.CurrencyId);
+            await _dbContext.Transactions.AddAsync(transaction, cancellationToken);
 
             claim?.AttachOrder(order.Id);
 
