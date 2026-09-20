@@ -9,6 +9,7 @@ using PaymentDetailApi.Application.Common.Interfaces;
 using PaymentDetailApi.Domain.Catalog.Events;
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Orders.Events;
+using PaymentDetailApi.Domain.Orders.Repositories;
 using PaymentDetailApi.Domain.Payment.Events;
 using PaymentDetailApi.Infrastructure.Auth;
 using PaymentDetailApi.Infrastructure.DomainEvents;
@@ -17,6 +18,7 @@ using PaymentDetailApi.Infrastructure.Notification;
 using PaymentDetailApi.Infrastructure.EventHandlers.Payments;
 using PaymentDetailApi.Infrastructure.EventHandlers.Products;
 using PaymentDetailApi.Infrastructure.Persistence;
+using PaymentDetailApi.Infrastructure.Persistence.Repositories;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -61,6 +63,9 @@ builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCr
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
