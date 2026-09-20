@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using PaymentDetailApi.Application.Common;
 using PaymentDetailApi.Domain.Catalog.Entities;
+using PaymentDetailApi.Domain.Catalog.Repositories;
+using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Shared.ValueObjects;
-using PaymentDetailApi.Infrastructure.Persistence;
 
 namespace PaymentDetailApi.Application.Products.Commands
 {
@@ -18,10 +19,12 @@ namespace PaymentDetailApi.Application.Products.Commands
 
     public class CreateProductCommandHanlder : IRequestHandler<CreateProductCommand, Guid>
     {
-        private readonly PaymentDetailsContext _dbContext;
-        public CreateProductCommandHanlder(PaymentDetailsContext dbContext)
+        private readonly IProductRepository _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public CreateProductCommandHanlder(IProductRepository productRepository, IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
+            _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
@@ -34,8 +37,8 @@ namespace PaymentDetailApi.Application.Products.Commands
                 request.IsActive
             );
 
-            await _dbContext.Products.AddAsync(product, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _productRepository.AddAsync(product, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return product.Id;
         }

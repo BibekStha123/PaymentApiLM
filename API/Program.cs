@@ -9,8 +9,12 @@ using PaymentDetailApi.Application.Common.Interfaces;
 using PaymentDetailApi.Domain.Catalog.Events;
 using PaymentDetailApi.Domain.Common;
 using PaymentDetailApi.Domain.Orders.Events;
+using PaymentDetailApi.Domain.Catalog.Repositories;
 using PaymentDetailApi.Domain.Orders.Repositories;
 using PaymentDetailApi.Domain.Payment.Events;
+using PaymentDetailApi.Domain.Payment.Repositories;
+using PaymentDetailApi.Domain.Shared.Repositories;
+using PaymentDetailApi.Domain.Transactions.Repositories;
 using PaymentDetailApi.Infrastructure.Auth;
 using PaymentDetailApi.Infrastructure.DomainEvents;
 using PaymentDetailApi.Infrastructure.EventHandlers.Orders;
@@ -66,6 +70,10 @@ builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IIdempotencyKeyRepository, IdempotencyKeyRepository>();
+builder.Services.AddScoped<IPaymentDetailRepository, PaymentDetailRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
