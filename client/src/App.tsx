@@ -1,24 +1,19 @@
 import { useState } from 'react'
 import { LoginForm } from './components/LoginForm'
+import { CreateOrderForm } from './components/CreateOrderForm'
 import type { UserResponse } from './api/users'
-
-const STORAGE_KEY = 'auth.user'
-
-function loadStoredUser(): UserResponse | null {
-  const raw = localStorage.getItem(STORAGE_KEY)
-  return raw ? (JSON.parse(raw) as UserResponse) : null
-}
+import { clearStoredUser, getStoredUser, storeUser } from './api/auth'
 
 function App() {
-  const [user, setUser] = useState<UserResponse | null>(loadStoredUser)
+  const [user, setUser] = useState<UserResponse | null>(getStoredUser)
 
   function handleLoginSuccess(loggedInUser: UserResponse) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(loggedInUser))
+    storeUser(loggedInUser)
     setUser(loggedInUser)
   }
 
   function handleLogout() {
-    localStorage.removeItem(STORAGE_KEY)
+    clearStoredUser()
     setUser(null)
   }
 
@@ -30,6 +25,10 @@ function App() {
         <button type="button" onClick={handleLogout} style={{ padding: '8px 16px' }}>
           Log out
         </button>
+
+        <hr style={{ margin: '24px 0' }} />
+
+        <CreateOrderForm />
       </div>
     )
   }
