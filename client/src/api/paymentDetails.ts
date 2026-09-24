@@ -1,4 +1,4 @@
-import { apiGet } from './client'
+import { apiGet, type CursorPagedResponse } from './client'
 
 // Mirrors Application/PaymentDetails/PaymentDetailResponse.cs
 export interface PaymentDetailResponse {
@@ -12,4 +12,8 @@ export interface PaymentDetailResponse {
 
 export function listMyCards(): Promise<PaymentDetailResponse[]> {
   return apiGet<PaymentDetailResponse[]>('/payment-details/my-cards')
+}
+
+export function listAllPaymentDetails(limit = 50): Promise<CursorPagedResponse<PaymentDetailResponse>> {
+  return apiGet<CursorPagedResponse<PaymentDetailResponse>>(`/payment-details?limit=${limit}`)
 }

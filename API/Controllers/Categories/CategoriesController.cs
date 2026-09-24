@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentDetailApi.Application.Categories;
 using PaymentDetailApi.Application.Categories.Commands;
+using PaymentDetailApi.Application.Categories.Queries;
 using PaymentDetailApi.Application.Common;
 
 namespace PaymentDetailApi.API.Controllers.Categories
@@ -16,6 +18,13 @@ namespace PaymentDetailApi.API.Controllers.Categories
         public CategoriesController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<CursorPagedResponse<CategoryResponse>>> Get([FromQuery] Guid? cursor, [FromQuery] int limit = 50)
+        {
+            var result = await _mediator.Send(new GetAllCategoriesQuery(cursor, limit));
+            return Ok(result);
         }
 
         [HttpPost]

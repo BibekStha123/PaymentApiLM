@@ -28,6 +28,10 @@ async function handleResponse<TResponse>(res: Response): Promise<TResponse> {
     throw new ApiError(res.status, text || res.statusText)
   }
 
+  if (res.status === 204) {
+    return undefined as TResponse
+  }
+
   return res.json() as Promise<TResponse>
 }
 
@@ -48,6 +52,16 @@ export async function apiPost<TResponse>(
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders(), ...extraHeaders },
     body: JSON.stringify(body),
+  })
+
+  return handleResponse<TResponse>(res)
+}
+
+export async function apiPatch<TResponse>(path: string, body?: unknown): Promise<TResponse> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
   return handleResponse<TResponse>(res)
